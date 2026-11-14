@@ -1,0 +1,17 @@
+version = 1
+
+# Files that cannot carry a comment header, or where one would be clutter.
+[[annotations]]
+path = [
+    "**/*.md",
+    "**/*.toml",
+    "**/*.yml",
+    "uv.lock",
+    ".gitignore",
+    ".gitattributes",
+    "NOTICE",
+    "src/soundsight/py.typed",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 The SoundSight contributors"
+SPDX-License-Identifier = "Apache-2.0"

@@ -1,0 +1,192 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 4 * * 1"  # weekly, to catch breakage from new dependency releases
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "0.11.7"
+  HYPOTHESIS_PROFILE: ci
+  PYTHONUTF8: "1"
+
+jobs:
+  hygiene:
+    name: Hygiene and licensing
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+      - name: No binaries, build output or oversized files
+        run: uv run --no-project python tools/check_repo_hygiene.py
+      - name: Every file has a declared licence (REUSE)
+        run: uv run --locked --only-group lint reuse lint
+
+  lint:
+    name: Lint and types
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+          enable-cache: true
+      - run: uv sync --locked
+      - name: ruff lint
+        run: uv run --locked ruff check --output-format=github .
+      - name: ruff format
+        run: uv run --locked ruff format --check .
+      - name: mypy (strict)
+        run: uv run --locked mypy
+
+  test:
+    name: Tests (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2025]
+        python: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+      - run: uv sync --locked --no-default-groups --group test
+      - name: pytest with coverage
+        run: uv run --no-sync pytest --cov --cov-report=term --cov-report=xml
+      - name: Keep the coverage report
+        if: ${{ matrix.os == 'ubuntu-24.04' && matrix.python == '3.13' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          retention-days: 30
+
+  next-python:
+    # Informational: not required by ci-ok, so a not-yet-supported Python cannot block merges.
+    name: Tests on the next Python (informational)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.15"
+      - name: Install newest compatible versions (pre-releases only where needed)
+        run: uv sync --upgrade --prerelease=if-necessary-or-explicit --no-default-groups --group test
+      - run: uv run --no-sync pytest
+
+  lowest:
+    name: Tests with lowest supported dependencies
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+      - run: uv sync --resolution lowest-direct --no-default-groups --group test
+      - name: Show resolved versions
+        run: uv run --no-sync python -c "import numpy, scipy; print('numpy', numpy.__version__, 'scipy', scipy.__version__)"
+      - run: uv run --no-sync pytest
+
+  legacy:
+    name: Regression on the 2016 recording
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+          enable-cache: true
+      - run: uv sync --locked --no-default-groups --group test
+      - name: Download and verify the recording
+        run: uv run --no-sync python tools/fetch_legacy_click.py
+      - name: Regression test
+        env:
+          SOUNDSIGHT_REQUIRE_LEGACY: "1"
+        run: uv run --no-sync pytest -m legacy -v
+
+  package:
+    name: Build and check the package
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+      - name: Build wheel and sdist
+        run: uv build
+      - name: twine check
+        run: uvx --from 'twine==7.*' twine check --strict dist/*
+      - name: Install the wheel in a clean environment and use it
+        run: |
+          uv venv --python 3.13 /tmp/smoke
+          uv pip install --python /tmp/smoke dist/*.whl
+          /tmp/smoke/bin/soundsight --version
+          /tmp/smoke/bin/soundsight click synth /tmp/smoke.wav
+          /tmp/smoke/bin/soundsight click analyze /tmp/smoke.wav --strict
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: dist
+          path: dist/
+          retention-days: 30
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+      - name: Export locked requirements, with hashes
+        run: uv export --locked --all-groups --no-emit-project --format requirements-txt -o requirements-audit.txt
+      - name: pip-audit
+        run: uvx --from 'pip-audit==2.*' pip-audit --strict --requirement requirements-audit.txt --require-hashes --disable-pip
+
+  ci-ok:
+    name: All required checks passed
+    if: always()
+    needs: [hygiene, lint, test, lowest, legacy, package, audit]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fail if any required job failed or was cancelled
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1
