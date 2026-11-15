@@ -86,9 +86,11 @@ jobs:
           retention-days: 30
 
   next-python:
-    # Informational: not required by ci-ok, so a not-yet-supported Python cannot block merges.
+    # Informational: not required by ci-ok, and continue-on-error keeps a failure here from
+    # turning the whole run red. Red must always mean that something needs attention.
     name: Tests on the next Python (informational)
     runs-on: ubuntu-24.04
+    continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
@@ -100,6 +102,22 @@ jobs:
       - name: Install newest compatible versions (pre-releases only where needed)
         run: uv sync --upgrade --prerelease=if-necessary-or-explicit --no-default-groups --group test
       - run: uv run --no-sync pytest
+
+  acoustics-fine:
+    name: Acoustic validation on fine grids
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+          enable-cache: true
+      - run: uv sync --locked --no-default-groups --group test
+      - name: Reference solver against exact solutions at higher resolution
+        run: uv run --no-sync pytest -m slow -v
 
   lowest:
     name: Tests with lowest supported dependencies
@@ -184,7 +202,7 @@ jobs:
   ci-ok:
     name: All required checks passed
     if: always()
-    needs: [hygiene, lint, test, lowest, legacy, package, audit]
+    needs: [hygiene, lint, test, acoustics-fine, lowest, legacy, package, audit]
     runs-on: ubuntu-24.04
     steps:
       - name: Fail if any required job failed or was cancelled

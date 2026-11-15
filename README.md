@@ -7,8 +7,10 @@ device they must depend on.
 
 **Status: pre-alpha, stage 1.** What works today is the *click coach*: it checks a
 recording of tongue clicks and reports, in plain language, how long and how high they are,
-how consistent, and whether the recording is good enough to use. Synthetic echo-acoustic
-exercises are the next step.
+how consistent, and whether the recording is good enough to use. The acoustic engine that
+will produce the echoes is being built against a published validation suite: see
+[how the acoustics is validated](docs/acoustics/validation.md) and
+[why it uses rays with edge diffraction](docs/decisions/0002-acoustic-engine.md).
 
 ## Accessibility first
 

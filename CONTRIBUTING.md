@@ -31,8 +31,9 @@ Every push to `main` and every pull request runs these jobs on GitHub:
 | Hygiene and licensing | No compiled files, IDE state or files over 512 KiB are tracked; every file has a declared licence (REUSE). |
 | Lint and types | ruff lint and formatting pass; mypy passes in strict mode. |
 | Tests | The full suite passes on Linux, macOS and Windows with Python 3.12, 3.13 and 3.14, with at least 95% branch coverage. Warnings are errors. |
+| Acoustic validation | Every acoustic model is checked against exact solutions and a validated wave solver, with a declared verdict for each canonical problem (part of the tests above); a separate job repeats the solver's own checks on fine grids. See [docs/acoustics/validation.md](docs/acoustics/validation.md). |
 | Lowest dependencies | The suite also passes with the oldest dependency versions `pyproject.toml` claims to support. |
-| Next Python | The suite runs on the next Python release; failures there are reported but do not block. |
+| Next Python | The suite runs on the next Python release; failures there are reported but neither block nor turn the run red. |
 | Legacy recording | The analysis still gives the expected results on the real 2016 recording, downloaded from a pinned commit and verified by checksum. |
 | Package | The wheel and source distribution build, pass `twine check`, and the installed command works in a clean environment. |
 | Dependency audit | No dependency in `uv.lock` has a known vulnerability. |
@@ -43,6 +44,9 @@ updates to them and to `uv.lock`.
 
 ## Rules for contributions
 
+- **Acoustic models are admitted by test.** A new engine or approximation is added to
+  the conformance matrix with a declared verdict for each canonical problem, and is used
+  only within the range where it passes.
 - **Tests come with code.** New behaviour needs tests; bug fixes need a test that fails
   without the fix. Prefer tests against synthetic signals with known ground truth.
 - **No binaries in git.** Compiled files and large media are rejected by CI.
