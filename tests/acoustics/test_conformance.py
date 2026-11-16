@@ -14,7 +14,9 @@ difference listeners notice.
 
 from __future__ import annotations
 
+import tomllib
 from collections.abc import Callable
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -35,8 +37,14 @@ MODELS: dict[str, cn.EchoModel] = {
     )
 }
 
-LEVEL_TOLERANCE_DB = 1.0
-CUE_TOLERANCE_DB = 1.5
+#: Thresholds come from the single versioned source, never from this file.
+BUDGETS = tomllib.loads(
+    (Path(__file__).resolve().parents[2] / "docs" / "quality" / "budgets.toml").read_text(
+        encoding="utf-8"
+    )
+)["acoustics"]
+LEVEL_TOLERANCE_DB: float = BUDGETS["conformance"]["level_tolerance_db"]
+CUE_TOLERANCE_DB: float = BUDGETS["conformance"]["size_cue_tolerance_db"]
 
 
 def _click_band(run: fdtd.EchoRatio) -> np.ndarray:
@@ -130,7 +138,8 @@ def _spectrum_error(
 def test_edge_diffraction_tracks_the_spectrum_of_a_large_disk(disk_wide: fdtd.EchoRatio) -> None:
     edge = _spectrum_error(MODELS["edge-diffraction"], disk_wide, 5.0, 100.0)
     kirchhoff = _spectrum_error(MODELS["kirchhoff"], disk_wide, 5.0, 100.0)
-    assert edge < 0.08  # complex error, magnitude and phase, against the wave solver
+    # Complex error, magnitude and phase, against the wave solver.
+    assert edge < BUDGETS["conformance"]["large_disk_spectrum_error"]
     assert kirchhoff > 2.0 * edge  # the correct rim coefficient is what makes the difference
 
 
@@ -138,7 +147,7 @@ def test_edge_diffraction_breaks_down_for_small_disks(disk_compact: fdtd.EchoRat
     """Below ka of about 1 edge asymptotics fail and the compact model takes over."""
     edge = _spectrum_error(MODELS["edge-diffraction"], disk_compact, 0.0, 0.5)
     compact = _spectrum_error(MODELS["compact"], disk_compact, 0.0, 0.5)
-    assert compact < 0.05
+    assert compact < BUDGETS["conformance"]["compact_disk_spectrum_error"]
     assert edge > 0.5
 
 
@@ -193,6 +202,11 @@ def test_sphere_echo_level(name: str, ka_range: tuple[float, float], verdict: st
 def test_models_refuse_targets_they_cannot_handle(name: str, target: cn.Target) -> None:
     with pytest.raises(cn.UnsupportedTargetError, match="has no model"):
         MODELS[name].echo_ratio(target, [1000.0])
+
+
+def test_click_band_matches_the_budgets_file() -> None:
+    band = BUDGETS["click_band_hz"]
+    assert (band["low"], band["high"]) == cn.CLICK_BAND_HZ
 
 
 def test_exact_wall_and_band_level() -> None:

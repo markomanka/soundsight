@@ -1,0 +1,28 @@
+# Thresholds that tests and CI enforce: one source of truth, versioned with the code.
+#
+# "No benchmark without a budget": a number means something only against a threshold
+# fixed before the measurement (docs/experiments/README.md). Each value says whether it
+# was pre-registered or set retrospectively, and which experiment it belongs to.
+# (File proposed by Kimi, kimi.ai, in the 2026-11-15 quality-gates draft.)
+
+[acoustics.conformance]
+# Echo level over the click band, model against reference. About 1 dB is the smallest
+# level difference listeners notice. Fixed before measuring (EXP-0002, EXP-0003).
+level_tolerance_db = 1.0
+
+# Difference in echo level between two object sizes. Retrospective in EXP-0002;
+# pre-registered at this value for EXP-0003.
+size_cue_tolerance_db = 1.5
+
+# Mean complex error of the echo spectrum for a large disk (ka above 5).
+# Retrospective (EXP-0002): chosen to hold measured behaviour against regression.
+large_disk_spectrum_error = 0.08
+
+# Mean complex error of the echo spectrum for a small disk (ka below 0.5).
+# Retrospective (EXP-0002).
+compact_disk_spectrum_error = 0.05
+
+[acoustics.click_band_hz]
+# Where clicks carry most of their energy (literature B1). Fixed before measuring.
+low = 2000.0
+high = 4000.0

@@ -2,6 +2,9 @@
 
 Date: 2026-11-13. Status: accepted.
 
+Literature: none (a decision about licensing and repository history, not about science).
+Experiments: none (decided from the contents and licence terms of the 2016 repository).
+
 ## Context
 
 The 2016 demonstrator (github.com/SoundSight/SoundSight, two commits, May 2016) is a

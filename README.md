@@ -45,6 +45,16 @@ The reference ranges used by the checks are **provisional**. They follow publish
 descriptions of expert echolocators' clicks loosely and will be calibrated with
 echolocation instructors and researchers before being offered as targets.
 
+## Plan and evidence
+
+- [Roadmap](docs/roadmap.md): the stages, and what is not yet known.
+- [Quality gates](docs/quality/quality-gates.md): how each stage's success is measured,
+  decided before it is built.
+- [Research base](docs/research/literature.md): the literature behind each decision,
+  checked against publisher records.
+- [Experiments](docs/experiments/README.md): decisions are made by measurement, with
+  thresholds fixed in advance.
+
 ## Development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). In short: `uv run python tools/check_all.py`
@@ -57,6 +67,15 @@ demonstrator ([SoundSight/SoundSight](https://github.com/SoundSight/SoundSight))
 built on a closed, non-commercial acoustics library and could not be developed further.
 This repository is a fresh start; [docs/decisions](docs/decisions) explains why, and
 [docs/legacy-2016.md](docs/legacy-2016.md) records what the demonstrator did.
+
+## Acknowledgements
+
+SoundSight began as a project of the SCImPULSE Foundation. The quality-gate structure,
+the pre-registration rule for experiments, the dependency-licence allowlist, the
+evidence-citation check and the first draft of the research base were contributed by
+Kimi (kimi.ai) in a working session with the project lead on 2026-11-15; they were then
+reviewed, checked against PubMed and revised. Much of the code and documentation was
+written with Claude (Anthropic).
 
 ## Licence
 

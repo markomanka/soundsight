@@ -3,6 +3,9 @@
 Date: 2026-11-15. Status: accepted. Evidence: `tests/acoustics/`, described in
 [docs/acoustics/validation.md](../acoustics/validation.md).
 
+Literature: A3, B1, B2, D3, D5 (see [docs/research/literature.md](../research/literature.md)).
+Experiments: EXP-0002 (retrospective evidence), EXP-0003 (pre-registered next test).
+
 ## Context
 
 The 2016 demonstrator computed echoes with GSound, a closed third-party library that
@@ -85,6 +88,22 @@ listener notices. "Kirchhoff" is the classic textbook approximation; it is inclu
 show that the *correct* edge coefficient matters: its rim wave is too weak whenever the
 listener is not in the mirror direction of the rim, by a quarter for a disk whose radius
 is 0.3 of its distance.
+
+### What the literature adds
+
+- The size-discrimination task of the training study we take as a template (A3) uses
+  discs of 5.1 to 25.4 cm diameter at 33 to 99 cm: all smaller than the Fresnel zone, so
+  the task *is* the size-dependence that mirror reflection lacks. Its smallest disc has
+  ka between 0.9 and 1.9 over the click band, inside the gap described below.
+- Expert listeners detect echoes 27 dB below the emission (B2), so an engine may not
+  discard weak echoes as negligible.
+- A round robin of room-acoustics software against measurements found that the programs
+  could not give a reliable pattern of early reflections, largely because diffraction
+  was missing or insufficient, and that simulated and measured responses were always
+  audibly different (D5). Predicting room parameters to within a just-noticeable
+  difference needs input data better than exists (D3). Both point the same way as our
+  measurements: early reflections with correct diffraction are the hard and necessary
+  part, and claims of accuracy must be made problem by problem.
 
 ## Decision
 

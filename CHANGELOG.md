@@ -14,6 +14,13 @@ All notable changes to this project are recorded here. The format follows
   echolocation problems, and a conformance matrix with a declared verdict for every
   model and problem.
 - CI job repeating the wave solver's validation on fine grids.
+- Plan of record: roadmap, quality gates per stage, a research base checked against
+  PubMed, and experiment records with a pre-registration rule, including the
+  pre-registered EXP-0003 on the size-discrimination discs of a published training
+  study. Structure and first drafts contributed by Kimi (kimi.ai).
+- CI guards: a dependency-licence allowlist with reviewed overrides, and a check that
+  every decision record cites existing literature and experiments.
+- Test tolerances read from a single versioned budgets file.
 
 - Click coach: detection, measurement and quality checks of tongue-click recordings,
   with screen-reader-friendly text reports and JSON output (`soundsight click analyze`).
