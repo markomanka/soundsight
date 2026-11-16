@@ -92,11 +92,12 @@ jobs:
           retention-days: 30
 
   next-python:
-    # Informational: not required by ci-ok, and continue-on-error keeps a failure here from
-    # turning the whole run red. Red must always mean that something needs attention.
-    name: Tests on the next Python (informational)
+    # Early warning for the next Python release. Pre-releases usually cannot run the
+    # scientific stack at all, which says nothing about our code, so the job first asks
+    # whether the stack works. If it does not, the job says so and passes. If it does and
+    # our tests fail, the job fails: that is a real signal. Not required by ci-ok.
+    name: Tests on the next Python (early warning)
     runs-on: ubuntu-24.04
-    continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
@@ -107,7 +108,18 @@ jobs:
           python-version: "3.15"
       - name: Install newest compatible versions (pre-releases only where needed)
         run: uv sync --upgrade --prerelease=if-necessary-or-explicit --no-default-groups --group test
-      - run: uv run --no-sync pytest -m "not slow and not locked_env"
+      - name: Can the scientific stack and test tools run on this Python?
+        id: stack
+        run: |
+          if uv run --no-sync python -c "import numpy, scipy, hypothesis, pytest"; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Next Python not testable yet::numpy, scipy or hypothesis cannot be imported on this Python release. Nothing is known about SoundSight on it. This job will start testing as soon as the libraries support it."
+          fi
+      - name: Tests
+        if: steps.stack.outputs.ready == 'true'
+        run: uv run --no-sync pytest -m "not slow and not locked_env"
 
   acoustics-fine:
     name: Acoustic validation on fine grids
