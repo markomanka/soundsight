@@ -34,6 +34,7 @@ MODELS: dict[str, cn.EchoModel] = {
         cn.KirchhoffModel(),
         cn.EdgeDiffractionModel(),
         cn.CompactModel(),
+        cn.PlateEngineModel(),
     )
 }
 
@@ -71,7 +72,7 @@ def test_reference_models_satisfy_the_protocol() -> None:
         assert isinstance(model, cn.EchoModel)
 
 
-@pytest.mark.parametrize("name", ["specular", "kirchhoff", "edge-diffraction"])
+@pytest.mark.parametrize("name", ["specular", "kirchhoff", "edge-diffraction", "engine"])
 def test_wall_echoes_like_a_wall(name: str) -> None:
     ratio = MODELS[name].echo_ratio(cn.Wall(1.0), [500.0, 3000.0])
     np.testing.assert_array_equal(ratio, np.ones(2))
@@ -88,6 +89,8 @@ def test_wall_echoes_like_a_wall(name: str) -> None:
         ("edge-diffraction", "disk_5cm", PASS),
         ("edge-diffraction", "disk_10cm", PASS),
         ("compact", "disk_10cm", FAIL),  # long-wavelength formula used far outside its range
+        ("engine", "disk_5cm", PASS),  # about -0.8 dB
+        ("engine", "disk_10cm", PASS),
     ],
 )
 def test_disk_echo_level_in_click_band(
@@ -105,6 +108,7 @@ def test_disk_echo_level_in_click_band(
         ("kirchhoff", PASS),
         ("edge-diffraction", PASS),
         ("compact", FAIL),
+        ("engine", PASS),
     ],
 )
 def test_size_cue_between_5_and_10_cm_disks(
@@ -135,24 +139,34 @@ def _spectrum_error(
     return float((np.abs(run.ratio[sel] - modelled) / np.abs(run.ratio[sel])).mean())
 
 
-def test_edge_diffraction_tracks_the_spectrum_of_a_large_disk(disk_wide: fdtd.EchoRatio) -> None:
-    edge = _spectrum_error(MODELS["edge-diffraction"], disk_wide, 5.0, 100.0)
+@pytest.mark.parametrize("name", ["edge-diffraction", "engine"])
+def test_edge_diffraction_tracks_the_spectrum_of_a_large_disk(
+    name: str, disk_wide: fdtd.EchoRatio
+) -> None:
+    edge = _spectrum_error(MODELS[name], disk_wide, 5.0, 100.0)
     kirchhoff = _spectrum_error(MODELS["kirchhoff"], disk_wide, 5.0, 100.0)
     # Complex error, magnitude and phase, against the wave solver.
     assert edge < BUDGETS["conformance"]["large_disk_spectrum_error"]
     assert kirchhoff > 2.0 * edge  # the correct rim coefficient is what makes the difference
 
 
-def test_edge_diffraction_breaks_down_for_small_disks(disk_compact: fdtd.EchoRatio) -> None:
-    """Below ka of about 1 edge asymptotics fail and the compact model takes over."""
-    edge = _spectrum_error(MODELS["edge-diffraction"], disk_compact, 0.0, 0.5)
+@pytest.mark.parametrize("name", ["edge-diffraction", "engine"])
+def test_edge_diffraction_breaks_down_for_small_disks(
+    name: str, disk_compact: fdtd.EchoRatio
+) -> None:
+    """Below ka of about 1 first-order diffraction fails and the compact model takes over.
+
+    For the engine this is not an asymptotic breakdown but a missing physical effect:
+    a small disk is crossed rim to rim many times per period (second-order diffraction).
+    """
+    edge = _spectrum_error(MODELS[name], disk_compact, 0.0, 0.5)
     compact = _spectrum_error(MODELS["compact"], disk_compact, 0.0, 0.5)
     assert compact < BUDGETS["conformance"]["compact_disk_spectrum_error"]
     assert edge > 0.5
 
 
 # ---------------------------------------------------------------- disk: the known gap
-@pytest.mark.parametrize("name", ["compact", "edge-diffraction", "kirchhoff"])
+@pytest.mark.parametrize("name", ["compact", "edge-diffraction", "kirchhoff", "engine"])
 def test_no_simple_model_covers_disks_about_a_wavelength_around(
     name: str, disk_transition: fdtd.EchoRatio
 ) -> None:
@@ -190,6 +204,17 @@ def test_sphere_echo_level(name: str, ka_range: tuple[float, float], verdict: st
     _check(verdict, abs(error) <= LEVEL_TOLERANCE_DB, f"level error {error:+.2f} dB")
 
 
+# ---------------------------------------------------------------- engine against theory
+def test_engine_reproduces_first_order_closed_form_on_axis() -> None:
+    """Two independent derivations agree: the general edge integral of the engine, and
+    the closed form with the exact rim coefficient (they share no code)."""
+    target = cn.Disk(radius=0.1, distance=0.7)
+    f = np.linspace(0.3, 30.0, 60) * C / (2 * np.pi * target.radius)
+    engine = MODELS["engine"].echo_ratio(target, f)
+    closed = MODELS["edge-diffraction"].echo_ratio(target, f)
+    assert float(np.max(np.abs(engine - closed))) < 2e-3
+
+
 # ---------------------------------------------------------------- plumbing
 @pytest.mark.parametrize(
     ("name", "target"),
@@ -197,6 +222,7 @@ def test_sphere_echo_level(name: str, ka_range: tuple[float, float], verdict: st
         ("kirchhoff", cn.Sphere(0.1, 1.0)),
         ("edge-diffraction", cn.Sphere(0.1, 1.0)),
         ("compact", cn.Wall(1.0)),
+        ("engine", cn.Sphere(0.1, 1.0)),
     ],
 )
 def test_models_refuse_targets_they_cannot_handle(name: str, target: cn.Target) -> None:

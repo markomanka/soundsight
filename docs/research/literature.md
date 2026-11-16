@@ -47,6 +47,14 @@ entries were added and four were retired. Changes are listed at the end.
 | D3 | Vorlander M (2013). Computer simulations in room acoustics: concepts and uncertainties. *J. Acoust. Soc. Am.* 133(3):1203-1213. doi:10.1121/1.4788978 | docs/quality/quality-gates.md (room gate): predicting reverberation time to within a just-noticeable difference needs absorption data better than measurements provide, so "within one JND of the measured room" is not a realistic pass mark; docs/decisions/0002. | Review | PubMed 2026-11-15 |
 | D5 | Brinkmann F, Aspock L, Ackermann D, Lepa S, Vorlander M, Weinzierl S (2019). A round robin on room acoustical simulation and auralization. *J. Acoust. Soc. Am.* 145(4):2746. doi:10.1121/1.5096178 | docs/decisions/0002 (independent support: simulation software fails on early reflections largely because diffraction is missing or insufficient, and the difference from measurement was always audible); docs/quality/quality-gates.md (state of the art against which room gates are set). | Round robin against measurements | PubMed 2026-11-15 |
 
+## H. Edge diffraction (the engine's method)
+
+| ID | Citation | Used by, and what we take from it | Kind | Checked |
+| --- | --- | --- | --- | --- |
+| H1 | Svensson UP, Fred RI, Vanderkooy J (1999). An analytic secondary source model of edge diffraction impulse responses. *J. Acoust. Soc. Am.* 106(5):2331-2344. | src/soundsight/acoustics/engine.py and docs/acoustics/engine.md: the formulation of first-order edge diffraction the engine implements, exact for a rigid wedge. Its prefactor and sign are also fixed independently by the engine's boundary-continuity test. | Method paper | Unchecked (not indexed in PubMed); citation from memory |
+| H2 | Torres RR, Svensson UP, Kleiner M (2001). Computation of edge diffraction for more accurate room acoustics auralization. *J. Acoust. Soc. Am.* 109(2):600-610. doi:10.1121/1.1340647 | docs/acoustics/engine.md: the time-domain method was validated, diffraction is clearly audible even outside shadow zones, and second-order diffraction to receivers outside shadows can often be neglected; EXP-0003 found the exception that matters to us, objects one or two wavelengths around. | Method and listening study | PubMed 2026-11-16 |
+| H3 | Asheim A, Svensson UP (2013). An integral equation formulation for the diffraction from convex plates and polyhedra. *J. Acoust. Soc. Am.* 133(6):3681-3691. doi:10.1121/1.4802654 | docs/acoustics/engine.md (next increment): diffraction of all orders from plates and polyhedra, accurate down to zero frequency, with results for a circular disc that agree with reference solutions across the frequency range. | Method paper | PubMed 2026-11-16 |
+
 ## E. Standards, formats and datasets
 
 | ID | Citation | Used by, and what we take from it | Kind | Checked |

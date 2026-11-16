@@ -50,6 +50,7 @@ these tests, not because of its code:
 | Sphere against the exact series, ka up to 3 | Error 21%, 7%, 4% at 8, 16, 32 cells per radius: the staircase error shrinks steadily |
 | Small disk against the exact long-wavelength limit | Within 3% at 8 cells per radius and 2% at 16 |
 | Disk echo level, coarse grid against fine grid | Within 0.3 dB |
+| Model error for a disk of 5 cm radius, at 6, 12 and 18 cells per radius | -0.56, -0.78 and -0.81 dB: converged by 12 cells, which is now the minimum for every reference used to judge a model |
 
 Two properties of the solver are recorded because they affect how it may be used.
 
@@ -81,6 +82,15 @@ or rung 1. Each pair has a declared verdict.
 
 A pair declared FAIL is a strict expected failure: the test reports the measured error
 and breaks if the model unexpectedly passes, so the record is corrected deliberately.
+
+### Rung 3: the production engine
+
+`soundsight.acoustics.engine` is admitted like any other model, through the conformance
+matrix, and in addition is tested for laws that hold for every scene (continuity at
+reflection boundaries, reciprocity, scale invariance, the wall limit, convergence and
+impulse-response fidelity). See [the engine](engine.md) and the pre-registered
+[EXP-0003](../experiments/EXP-0003-size-discrimination-discs.md), which a separate CI
+workflow re-runs weekly and on every change to the acoustics code.
 
 ## Admitting a new engine
 

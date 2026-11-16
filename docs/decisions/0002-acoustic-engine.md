@@ -1,10 +1,11 @@
 # 2. Acoustic engine: rays with edge diffraction in production, waves as the referee
 
-Date: 2026-11-15. Status: accepted. Evidence: `tests/acoustics/`, described in
+Date: 2026-11-15. Status: accepted. Implementation: increment 1 (one thin plate,
+first-order diffraction) since 2026-11-16, see [the engine](../acoustics/engine.md). Evidence: `tests/acoustics/`, described in
 [docs/acoustics/validation.md](../acoustics/validation.md).
 
-Literature: A3, B1, B2, D3, D5 (see [docs/research/literature.md](../research/literature.md)).
-Experiments: EXP-0002 (retrospective evidence), EXP-0003 (pre-registered next test).
+Literature: A3, B1, B2, D3, D5, H1, H2, H3 (see [docs/research/literature.md](../research/literature.md)).
+Experiments: EXP-0002 (retrospective evidence), EXP-0003 (pre-registered, run 2026-11-16).
 
 ## Context
 
