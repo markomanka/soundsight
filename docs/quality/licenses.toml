@@ -1,0 +1,38 @@
+# Dependency licence policy, enforced by tools/check_dependency_licenses.py in CI.
+#
+# This is the standing guard against a repeat of 2016, when the project came to depend
+# on a library it could not inspect, fix or redistribute. A dependency whose licence is
+# not listed here, or cannot be determined, fails the build until a person has reviewed
+# it and recorded the outcome in this file.
+# (Guard proposed by Kimi, kimi.ai, in the 2026-11-15 quality-gates draft.)
+
+[runtime]
+# Packages installed with SoundSight on a user's machine. Permissive licences only.
+allowed = [
+    "Apache-2.0", "MIT", "BSD-2-Clause", "BSD-3-Clause", "ISC",
+    "0BSD", "Zlib", "CC0-1.0", "PSF-2.0",
+]
+
+[development]
+# Tools used to build, test and check SoundSight. They are never distributed with it,
+# so weak and strong copyleft are acceptable here, in addition to the runtime list.
+allowed = [
+    "MPL-2.0", "GPL-2.0-or-later", "GPL-3.0-or-later", "CC-BY-SA-4.0",
+]
+
+# Packages whose metadata does not state a licence in machine-readable form.
+# Each entry records what a person found, and when.
+[overrides.scipy]
+license = "BSD-3-Clause"
+reviewed = "2026-11-15"
+note = "Metadata holds the full licence text. Binary wheels also bundle OpenBLAS (BSD-3-Clause) and the GNU Fortran runtime (GPL-3.0 with the GCC runtime library exception); re-review before any app-store distribution."
+
+[overrides.jinja2]
+license = "BSD-3-Clause"
+reviewed = "2026-11-15"
+note = "Declared only through the generic 'BSD License' classifier."
+
+[overrides.colorama]
+license = "BSD-3-Clause"
+reviewed = "2026-11-15"
+note = "Development tool dependency on Windows only. Declared only through the generic 'BSD License' classifier; the project's LICENSE.txt is the 3-clause text."

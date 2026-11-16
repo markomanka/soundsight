@@ -943,6 +943,7 @@ dependencies = [
 dev = [
     { name = "hypothesis" },
     { name = "mypy" },
+    { name = "packaging" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "reuse" },
@@ -951,6 +952,7 @@ dev = [
 ]
 lint = [
     { name = "mypy" },
+    { name = "packaging" },
     { name = "reuse" },
     { name = "ruff" },
     { name = "scipy-stubs" },
@@ -971,6 +973,7 @@ requires-dist = [
 dev = [
     { name = "hypothesis", specifier = ">=6.100" },
     { name = "mypy", specifier = ">=1.11" },
+    { name = "packaging", specifier = ">=24.0" },
     { name = "pytest", specifier = ">=8.0" },
     { name = "pytest-cov", specifier = ">=5.0" },
     { name = "reuse", specifier = ">=5.0" },
@@ -979,6 +982,7 @@ dev = [
 ]
 lint = [
     { name = "mypy", specifier = ">=1.11" },
+    { name = "packaging", specifier = ">=24.0" },
     { name = "reuse", specifier = ">=5.0" },
     { name = "ruff", specifier = ">=0.8" },
     { name = "scipy-stubs", specifier = ">=1.14.1" },

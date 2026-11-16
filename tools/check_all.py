@@ -17,6 +17,8 @@ PY = sys.executable
 CHECKS: list[tuple[str, list[str]]] = [
     ("repository hygiene", [PY, "tools/check_repo_hygiene.py"]),
     ("licensing (REUSE)", [PY, "-m", "reuse", "lint"]),
+    ("dependency licences", [PY, "tools/check_dependency_licenses.py"]),
+    ("evidence citations in decision records", [PY, "tools/check_docs.py"]),
     ("lint (ruff)", [PY, "-m", "ruff", "check", "."]),
     ("formatting (ruff)", [PY, "-m", "ruff", "format", "--check", "."]),
     ("types (mypy)", [PY, "-m", "mypy"]),
