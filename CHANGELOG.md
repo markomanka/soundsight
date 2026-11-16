@@ -33,4 +33,5 @@ All notable changes to this project are recorded here. The format follows
 
 ### Fixed
 
-- The informational job for the next Python release no longer turns the whole CI run red.
+- The next-Python job now checks whether the scientific stack runs on that release at all,
+  and reports plainly when it does not, instead of failing for reasons unrelated to our code.
