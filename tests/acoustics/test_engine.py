@@ -209,3 +209,10 @@ def test_frequency_response_in_chunks_equals_direct_sum() -> None:
 def test_invalid_inputs(call, error: type[Exception], message: str) -> None:  # type: ignore[no-untyped-def]
     with pytest.raises(error, match=message):
         call()
+
+
+def test_render_refuses_arrivals_closer_than_its_filter_to_time_zero() -> None:
+    """The fractional-delay filter would be truncated and the response silently wrong."""
+    early = eg.Arrivals(np.array([10 / 48000]), np.array([1.0]), ())
+    with pytest.raises(ValueError, match="within 32 samples"):
+        eg.render(early, 48000, 256)

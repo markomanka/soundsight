@@ -397,6 +397,14 @@ def render(
         raise ValueError(msg)
     out = np.zeros(n_samples)
     pos = arrivals.delays * sample_rate
+    if pos.size and float(pos.min()) < half_width:
+        # The filter would reach before time zero and be truncated, silently distorting
+        # the response (at 48 kHz: arrivals earlier than 0.67 ms, an 11 cm round trip).
+        msg = (
+            f"an arrival is within {half_width} samples of the start; the fractional-delay "
+            "filter would be truncated (use a higher sample rate or a later time origin)"
+        )
+        raise ValueError(msg)
     base = np.floor(pos).astype(np.int64)
     offsets = np.arange(-half_width + 1, half_width + 1)
     idx = base[:, None] + offsets[None, :]
