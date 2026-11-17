@@ -176,8 +176,8 @@ def test_no_simple_model_covers_disks_about_a_wavelength_around(
     """
     run = disk_transition
     ka = 2 * np.pi * run.frequency_hz * run.radius / C
-    sel = (ka >= 1.0) & (ka <= 1.5)
-    assert sel.sum() >= 3
+    sel = (ka >= 1.0 - 1e-9) & (ka <= 1.5 + 1e-9)
+    assert sel.sum() == 11
     target = cn.Disk(run.radius, run.distance)
     error = cn.band_level_db(
         MODELS[name].echo_ratio(target, run.frequency_hz[sel])

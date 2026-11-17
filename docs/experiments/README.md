@@ -24,4 +24,5 @@ pre-registered or retrospective.
 | --- | --- | --- |
 | EXP-0001 | Which language and libraries for the real-time kernel? | Protocol drafted; deferred, to be revised before it runs |
 | EXP-0002 | Waves or rays for the acoustic engine? | Complete; retrospective |
-| EXP-0003 | Does the engine reproduce the echoes of the size-discrimination discs? | Run 2026-11-16: valid for 9 of 15 trials; re-run by CI |
+| EXP-0003 | Does the engine reproduce the echoes of the size-discrimination discs? | Run 2026-11-16, corrected 2026-11-17: valid for 10 of 15 trials; re-run by CI |
+| EXP-0004 | Which higher-order edge diffraction closes the gap? | Pre-registered 2026-11-17; references and baseline fixed; no candidate yet |

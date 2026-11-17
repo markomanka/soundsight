@@ -43,13 +43,14 @@ Status: [x] met and enforced by CI; [ ] open.
 
 - [x] Reference ladder in CI: exact solutions, a wave solver validated against them, and
       a conformance matrix with a declared verdict per model and problem.
-- [x] EXP-0003 run: 12 of 18 levels and 12 of 15 size cues within the pre-registered
-      tolerances; the 6 trials with 5.1 and 9.0 cm discs use wave-solver echoes. Re-run
-      weekly and on every change to the acoustics code.
+- [x] EXP-0003 run: 13 of 18 levels and 12 of 15 size cues within the pre-registered
+      tolerances (after the correction of 2026-11-17); the 5 remaining trials use
+      wave-solver echoes. Re-run weekly and on every change to the acoustics code.
 - [x] Engine laws enforced by CI: continuity at reflection boundaries, reciprocity,
       scale invariance, wall limit, convergence, impulse-response fidelity.
-- [ ] Higher-order diffraction brings the 5.1 and 9.0 cm discs within tolerance
-      (EXP-0003 re-run unchanged).
+- [ ] Higher-order diffraction chosen and accepted by EXP-0004 (pre-registered): all of
+      EXP-0003 within tolerance, the gap disc within 1 dB and 10% in every band from
+      ka 0.25 to 4, physical laws intact, within the cost budget.
 - [ ] Canonical problems added, each with a reference, for: the 80 x 20 cm rectangle at
       four orientations (A3); a thin pole; an object off axis; two ears.
 - [ ] Measured rung: simulated against measured impulse responses for at least one

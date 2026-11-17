@@ -34,7 +34,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 import numpy as np
-from numpy.typing import NDArray
+from numpy.typing import ArrayLike, NDArray
 
 from soundsight.acoustics.reference.analytic import SPEED_OF_SOUND, ComplexArray
 
@@ -248,6 +248,7 @@ def monostatic_echo_ratio(
     c: float = SPEED_OF_SOUND,
     tail_cells: int | None = None,
     band_db: float = 20.0,
+    frequencies_hz: ArrayLike | None = None,
 ) -> EchoRatio:
     """Compute the monostatic echo ratio of an on-axis rigid object with the wave solver.
 
@@ -280,6 +281,12 @@ def monostatic_echo_ratio(
         that cross the object several times. Defaults to four radii.
     band_db
         Frequencies whose mirror-signal level is within this many dB of its peak are kept.
+    frequencies_hz
+        Evaluate the echo ratio at exactly these frequencies (the discrete-time Fourier
+        transform of the recordings) instead of at the FFT bins. Use this when results
+        are compared across runs or averaged over a band: FFT bins move with the
+        recording length, and on a steep spectrum that alone shifts a band average.
+        Each frequency must lie where the source is within ``band_db`` of its peak.
     """
     if shape not in {"disk", "sphere", "wall"}:
         msg = f"unknown shape: {shape!r}"
@@ -326,7 +333,18 @@ def monostatic_echo_ratio(
     scattered = np.fft.rfft(with_object[:, 0] - free[:, 0])
     freqs = np.fft.rfftfreq(n_steps, dt)
     level = np.abs(reference)
-    keep = (level >= level.max() * 10.0 ** (-band_db / 20.0)) & (freqs > 0.0)
+    floor = level.max() * 10.0 ** (-band_db / 20.0)
+    keep = (level >= floor) & (freqs > 0.0)
+    if frequencies_hz is not None:
+        freqs = np.atleast_1d(np.asarray(frequencies_hz, dtype=np.float64))
+        times = np.arange(n_steps) * dt
+        kernel = np.exp(-2j * np.pi * np.outer(freqs, times))
+        reference = np.asarray(kernel @ free[:, 1], dtype=np.complex128)
+        scattered = np.asarray(kernel @ (with_object[:, 0] - free[:, 0]), dtype=np.complex128)
+        if np.any(np.abs(reference) < floor):
+            msg = "some requested frequencies are outside the band the pulse excites"
+            raise ValueError(msg)
+        keep = np.ones(freqs.shape, dtype=bool)
     offset = DISK_EDGE_OFFSET_CELLS if shape == "disk" else 0.0
     return EchoRatio(
         frequency_hz=freqs[keep],

@@ -5,7 +5,7 @@ first-order diffraction) since 2026-11-16, see [the engine](../acoustics/engine.
 [docs/acoustics/validation.md](../acoustics/validation.md).
 
 Literature: A3, B1, B2, D3, D5, H1, H2, H3 (see [docs/research/literature.md](../research/literature.md)).
-Experiments: EXP-0002 (retrospective evidence), EXP-0003 (pre-registered, run 2026-11-16).
+Experiments: EXP-0002 (retrospective evidence), EXP-0003 (pre-registered, run 2026-11-16), EXP-0004 (pre-registered: which higher-order diffraction).
 
 ## Context
 
@@ -75,17 +75,19 @@ Measured against the wave solver:
 
 | Canonical problem | Mirror only | Kirchhoff | Edge diffraction (first order) | Compact (Rayleigh) |
 | --- | --- | --- | --- | --- |
-| 5 cm disk at 1 m, level in click band | +15.8 dB | -1.2 dB | -0.6 dB | +0.9 dB |
-| 10 cm disk at 1 m, level in click band | +5.1 dB | -0.2 dB | +0.4 dB | +8.0 dB |
-| Size cue, 5 to 10 cm (wave solver: +10.6 dB) | 0.0 dB | +11.7 dB | +11.6 dB | +17.8 dB |
+| 5 cm disk at 1 m, level in click band | +15.7 dB | -1.4 dB | -0.7 dB | +0.7 dB |
+| 10 cm disk at 1 m, level in click band | +5.1 dB | -0.1 dB | +0.4 dB | +8.2 dB |
+| Size cue, 5 to 10 cm (wave solver: +10.6 dB) | 0.0 dB | +11.9 dB | +11.8 dB | +18.1 dB |
 | Large disk (ka 5 to 12), complex spectrum error | not applicable | 17% | 6% | not applicable |
 | Small disk (ka below 0.5), complex spectrum error | not applicable | not tested | above 50% | below 5% |
-| Disk in the gap (ka 1.0 to 1.5), level | not tested | +1.9 dB | +4.0 dB | -2.9 dB |
+| Disk in the gap (ka 1.0 to 1.5), level | not tested | +2.3 dB | +4.5 dB | -2.7 dB |
 | Small sphere (ka 0.1 to 0.3), level vs exact | +22.6 dB | not applicable | not applicable | +0.2 dB |
 | Large sphere (ka 40 to 80), level vs exact | 0.0 dB | not applicable | not applicable | wrong by design |
 
 Level errors are relative to the reference; about 1 dB is the smallest difference a
-listener notices. "Kirchhoff" is the classic textbook approximation; it is included to
+listener notices. "5 cm" and "10 cm" are radii. Numbers revised on 2026-11-17 after two
+corrections to how references are computed (12 cells per radius instead of 6; band
+levels at fixed frequencies instead of FFT bins); no conclusion of this decision changed. "Kirchhoff" is the classic textbook approximation; it is included to
 show that the *correct* edge coefficient matters: its rim wave is too weak whenever the
 listener is not in the mirror direction of the rim, by a quarter for a disk whose radius
 is 0.3 of its distance.
@@ -137,8 +139,8 @@ is 0.3 of its distance.
   reflection alone is valid only for surfaces larger than the Fresnel zone and for large
   convex bodies.
 - **There is a known gap.** Between about ka = 0.75 and 1.5 neither simple model reaches
-  1 dB (the compact model is 1.4 to 2.9 dB low, first-order edge diffraction 4 to 10 dB
-  high), and just above it first-order diffraction still wobbles by up to 2 dB in narrow
+  1 dB (over ka 1.0 to 1.5 the compact model is 2.7 dB low, first-order edge diffraction
+  4.5 dB high), and just above it first-order diffraction still wobbles by up to 2 dB in narrow
   bands. At 3 kHz, ka = 1 is a radius of 1.8 cm, so this is the regime of thin poles. It
   will need higher-order diffraction or scattering tables precomputed with the wave
   solver. The conformance matrix records the gap, so closing it is a visible event.

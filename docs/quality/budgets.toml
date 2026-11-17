@@ -31,3 +31,20 @@ high = 4000.0
 # A re-run of an experiment must reproduce its stored levels to this precision. A
 # numerical tolerance (platform and library differences), not a perceptual one.
 reproducibility_db = 0.02
+
+[experiments.exp0004]
+# Pre-registered 2026-11-17, before any higher-order diffraction candidate exists.
+# Echo level in each ka band of workload W2, candidate against wave solver.
+band_level_db = 1.0
+# Mean complex error of the echo spectrum in each band of W2.
+spectrum_error = 0.10
+# Validity of the reference itself: the two runs must agree in their overlap band, and
+# at the lowest frequency the reference must approach the exact small-disk limit.
+reference_overlap_db = 0.3
+reference_compact_limit = 0.03
+# Cost on a standard GitHub ubuntu-24.04 runner, median of three runs, 25.4 cm disc at
+# 33 cm: frequency response at 20 frequencies in 2 to 4 kHz, and a full 48 kHz impulse
+# response. Chosen so that an exercise pack of about 200 echoes precomputes overnight on
+# modest hardware (200 x 120 s is under 7 hours).
+cost_frequency_response_s = 10.0
+cost_impulse_response_s = 120.0

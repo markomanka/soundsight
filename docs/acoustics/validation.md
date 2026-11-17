@@ -65,6 +65,11 @@ To cancel numerical dispersion, the echo ratio is formed from two signals that t
 the same distance through the same grid: the scattered pulse at the listener and the
 free-field pulse at twice the object's distance.
 
+Band levels are always averaged over fixed frequencies, each an exact transform of the
+recordings, never over FFT bins. Bins move with the recording length, and on a steep
+spectrum that alone shifted band averages by up to half a decibel before it was found
+(EXP-0003, amendment 2).
+
 ### Rung 2: the conformance matrix (`tests/acoustics/test_conformance.py`)
 
 Candidate models are run through canonical problems whose reference comes from rung 0
