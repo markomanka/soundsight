@@ -51,19 +51,20 @@ From the conformance matrix ([validation](validation.md)) and the pre-registered
 experiment [EXP-0003](../experiments/EXP-0003-size-discrimination-discs.md):
 
 - **Valid (within 1 dB of the wave solver):** discs of 13.5 cm diameter and larger at
-  33 to 99 cm, and any disc whose ka over the click band stays above about 4.
-  In the size-discrimination task, 9 of 15 trials can use the engine.
-- **Not valid:** discs of 5.1 cm diameter (1.8 to 2.3 dB too loud) and, narrowly, 9.0 cm
-  (1.0 to 1.1 dB too quiet). These objects are only one or two wavelengths around, so a
+  33 to 99 cm, and the 9.0 cm disc at 33 cm. In the size-discrimination task, 10 of 15
+  trials can use the engine.
+- **Not valid:** discs of 5.1 cm diameter (1.9 to 2.0 dB too loud) and, narrowly, 9.0 cm
+  at 66 and 99 cm (1.1 dB too quiet). These objects are only one or two wavelengths around, so a
   wave crosses them rim to rim several times; first-order diffraction leaves this out.
   Their echoes are precomputed with the wave solver, as the protocol requires.
 
 ## Next increments
 
-1. **Higher-order diffraction** for small objects. The edge-source integral equation of
-   H3 handles diffraction of all orders and has been shown to agree with reference
-   solutions for a circular disc across the whole frequency range: the known route to
-   closing the gap.
+1. **Higher-order diffraction** for small objects, chosen by the pre-registered
+   [EXP-0004](../experiments/EXP-0004-higher-order-diffraction.md) between explicit
+   second-order diffraction and the edge-source integral equation of H3, which handles
+   all orders and agrees with reference solutions for a circular disc across the whole
+   frequency range.
 2. **Several objects, with occlusion.** The current API takes one plate on purpose:
    summing plates without visibility tests would give wrong answers silently.
 3. Rigid boxes (wedges of 270 degrees), absorbing surfaces, rooms, and two ears.

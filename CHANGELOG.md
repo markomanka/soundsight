@@ -8,6 +8,12 @@ All notable changes to this project are recorded here. The format follows
 
 ### Added
 
+- EXP-0004 pre-registered: the choice between second-order edge diffraction and the
+  edge-source integral equation of all orders, with fixed references (checked against
+  each other and against the exact small-disk limit), baseline, thresholds and cost
+  budgets. Re-checked by the Experiments workflow.
+- The wave solver can evaluate echo ratios at any fixed set of frequencies.
+
 - Acoustic engine, increment 1 (`soundsight.acoustics.engine`): echoes of a thin convex
   rigid plate by image source plus first-order Biot-Tolstoy-Medwin edge diffraction, as
   exact frequency responses or impulse responses at any sample rate; validated by
@@ -39,6 +45,11 @@ All notable changes to this project are recorded here. The format follows
   a dependency audit.
 
 ### Fixed
+
+- Band levels were averaged over FFT bins, whose positions depend on the recording
+  length; on steep spectra this shifted levels by up to 0.54 dB. EXP-0003 and the
+  conformance tests now use fixed frequencies. EXP-0003 changed from 12 to 13 levels
+  within tolerance and from 9 to 10 trials using the engine (amendment 2).
 
 - The 5 cm reference disk used by the conformance tests ran on a grid coarse enough to
   flatter every model by 0.25 dB; it now uses 12 cells per radius.

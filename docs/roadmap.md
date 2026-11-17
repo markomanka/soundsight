@@ -35,8 +35,9 @@ until calibrated with instructors.
   plus edge diffraction, compact scatterers, impulse responses in the time domain,
   admitted problem by problem through the conformance matrix. Increment 1 (one thin
   plate, first-order diffraction) exists; on the size-discrimination discs of A3
-  (EXP-0003) it is valid for 9 of 15 trials, and the rest use wave-solver echoes. Next:
-  higher-order diffraction (H3), then several objects with occlusion.
+  (EXP-0003) it is valid for 10 of 15 trials, and the rest use wave-solver echoes. Next:
+  higher-order diffraction, chosen by the pre-registered EXP-0004, then several objects
+  with occlusion.
 - Exercises rendered in advance and played over headphones, triggered by the user, with
   the user's own recorded click. Template: the tasks of A3 (size discrimination,
   orientation, maze navigation with mirror-image transfer mazes, a no-click control).

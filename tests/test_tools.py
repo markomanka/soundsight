@@ -12,7 +12,7 @@ from tools import check_dependency_licenses as licences
 from tools import check_docs as docs
 from tools import check_repo_hygiene as hygiene
 from tools import fetch_legacy_click as fetch
-from tools.experiments import exp0003
+from tools.experiments import exp0003, exp0004
 
 
 def test_hygiene_accepts_source(tmp_path: Path) -> None:
@@ -329,3 +329,37 @@ def test_exp0003_stored_results_are_complete_and_consistent() -> None:
         ]
     )
     assert recomputed["summary"] == stored["summary"]
+
+
+# ---------------------------------------------------------------- EXP-0004 protocol
+def test_exp0004_bands_are_fixed_and_cover_the_gap() -> None:
+    bands = [(lo, hi) for lo, hi, _ in exp0004.BANDS]
+    assert bands == [(0.25, 0.5), (0.5, 1.0), (1.0, 2.0), (2.0, 4.0)]
+    ka = exp0004.band_ka(1.0, 2.0)
+    assert ka.size == exp0004.POINTS_PER_BAND
+    assert ka[0] == 1.0
+    assert ka[-1] < 2.0
+    assert exp0004.BAND_LEVEL_DB == 1.0
+    assert exp0004.SPECTRUM_ERROR == 0.10
+
+
+def test_exp0004_stored_references_are_valid_and_baseline_fails() -> None:
+    stored = json.loads(exp0004.RESULTS.read_text(encoding="utf-8"))
+    assert stored["reference_overlap"]["pass"]
+    assert stored["reference_compact_limit"]["pass"]
+    bands = stored["baseline"]["bands"]
+    assert len(bands) == 4
+    assert all(b["n_frequencies"] == exp0004.POINTS_PER_BAND for b in bands)
+    # The baseline (first-order engine) is what this experiment must improve on.
+    assert not all(b["level_pass"] and b["spectrum_pass"] for b in bands)
+
+
+def test_exp0004_compare_detects_drift() -> None:
+    stored = json.loads(exp0004.RESULTS.read_text(encoding="utf-8"))
+    assert exp0004.compare(stored, stored) == []
+    drifted = json.loads(json.dumps(stored))
+    drifted["baseline"]["bands"][0]["reference_level_db"] += 0.5
+    drifted["reference_overlap"]["pass"] = False
+    problems = exp0004.compare(drifted, stored)
+    assert any("differs" in p for p in problems)
+    assert any("disagree" in p for p in problems)

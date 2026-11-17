@@ -22,6 +22,8 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
+import numpy as np
+
 from soundsight.acoustics import canonical as cn
 from soundsight.acoustics.reference import fdtd
 from soundsight.acoustics.reference.analytic import SPEED_OF_SOUND
@@ -40,6 +42,9 @@ LEVEL_THRESHOLD_DB: float = _BUDGETS["acoustics"]["conformance"]["level_toleranc
 CUE_THRESHOLD_DB: float = _BUDGETS["acoustics"]["conformance"]["size_cue_tolerance_db"]
 # ---- Implementation choices, not thresholds ------------------------------------------
 PEAK_HZ = 2500.0
+#: Fixed frequencies at which every level is evaluated (amendment 2, 2026-11-17): exact
+#: transforms of the recordings, so levels do not depend on where FFT bins fall.
+BAND_FREQUENCIES_HZ = np.linspace(cn.CLICK_BAND_HZ[0], cn.CLICK_BAND_HZ[1], 41)
 #: Re-running must reproduce stored levels to this precision (numerical, not perceptual).
 REPRODUCIBILITY_DB: float = _BUDGETS["experiments"]["reproducibility_db"]
 
@@ -65,15 +70,9 @@ def run_case(diameter_cm: float, distance_cm: float) -> dict[str, Any]:
         radius_cells=cells,
         h=h,
         peak_frequency_hz=PEAK_HZ,
+        frequencies_hz=BAND_FREQUENCIES_HZ,
     )
-    band = (ref.frequency_hz >= cn.CLICK_BAND_HZ[0]) & (ref.frequency_hz <= cn.CLICK_BAND_HZ[1])
-    df = float(ref.frequency_hz[1] - ref.frequency_hz[0])
-    if ref.frequency_hz[band].min() > cn.CLICK_BAND_HZ[0] + df or (
-        ref.frequency_hz[band].max() < cn.CLICK_BAND_HZ[1] - df
-    ):
-        msg = f"reference band does not cover the click band for {diameter_cm} cm"
-        raise RuntimeError(msg)
-    f = ref.frequency_hz[band]
+    f = ref.frequency_hz
     target = cn.Disk(ref.radius, ref.distance)
     engine = cn.PlateEngineModel().echo_ratio(target, f)
     seconds = time.perf_counter() - started
@@ -86,7 +85,7 @@ def run_case(diameter_cm: float, distance_cm: float) -> dict[str, Any]:
         "cells_per_radius": cells,
         "ka_range": [round(float(ka.min()), 3), round(float(ka.max()), 3)],
         "n_frequencies": int(f.size),
-        "reference_level_db": round(cn.band_level_db(ref.ratio[band]), 4),
+        "reference_level_db": round(cn.band_level_db(ref.ratio), 4),
         "engine_level_db": round(cn.band_level_db(engine), 4),
         "seconds": round(seconds, 1),
     }

@@ -218,3 +218,35 @@ def test_sphere_mask_makes_touching_faces_rigid() -> None:
 def test_invalid_inputs_are_rejected(call, message: str) -> None:  # type: ignore[no-untyped-def]
     with pytest.raises(ValueError, match=message):
         call()
+
+
+def test_fixed_frequency_levels_do_not_depend_on_recording_length() -> None:
+    """FFT bins move with the recording length and bias band averages on steep spectra
+    (EXP-0003, amendment 2); exact transforms at fixed frequencies must not."""
+    f = np.linspace(2000.0, 4000.0, 21)
+    levels = []
+    for tail in (4, 12):
+        run = fdtd.monostatic_echo_ratio(
+            "disk",
+            distance_cells=40,
+            radius_cells=6,
+            h=0.0255 / (6 + fdtd.DISK_EDGE_OFFSET_CELLS),
+            peak_frequency_hz=2500.0,
+            tail_cells=tail * 6,
+            frequencies_hz=f,
+        )
+        np.testing.assert_array_equal(run.frequency_hz, f)
+        levels.append(10 * np.log10(np.mean(np.abs(run.ratio) ** 2)))
+    assert levels[0] == pytest.approx(levels[1], abs=1e-3)  # under 0.001 dB
+
+
+def test_fixed_frequencies_outside_the_excited_band_are_refused() -> None:
+    with pytest.raises(ValueError, match="outside the band"):
+        fdtd.monostatic_echo_ratio(
+            "disk",
+            distance_cells=20,
+            radius_cells=4,
+            h=0.01,
+            peak_frequency_hz=2500.0,
+            frequencies_hz=[100.0, 2500.0],
+        )

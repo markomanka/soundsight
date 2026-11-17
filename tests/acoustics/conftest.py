@@ -4,14 +4,27 @@
 
 from __future__ import annotations
 
+import math
+
+import numpy as np
 import pytest
 
+from soundsight.acoustics.canonical import CLICK_BAND_HZ
 from soundsight.acoustics.reference import fdtd
 from soundsight.acoustics.reference.analytic import SPEED_OF_SOUND
 
+#: Band levels are evaluated at fixed frequencies, never at FFT bins: bins move with the
+#: recording length and, on a steep spectrum, that alone shifts a band average by up to
+#: half a decibel (EXP-0003, amendment 2).
+CLICK_BAND_FREQUENCIES = np.linspace(CLICK_BAND_HZ[0], CLICK_BAND_HZ[1], 41)
+
 
 def disk_run(
-    radius_m: float, radius_cells: int, distance_m: float, peak_hz: float
+    radius_m: float,
+    radius_cells: int,
+    distance_m: float,
+    peak_hz: float,
+    frequencies_hz: np.ndarray | None = None,
 ) -> fdtd.EchoRatio:
     """Run the wave solver for a disk of a given acoustic radius and distance."""
     h = radius_m / (radius_cells + fdtd.DISK_EDGE_OFFSET_CELLS)
@@ -21,6 +34,7 @@ def disk_run(
         radius_cells=radius_cells,
         h=h,
         peak_frequency_hz=peak_hz,
+        frequencies_hz=frequencies_hz,
     )
 
 
@@ -31,13 +45,13 @@ def disk_5cm() -> fdtd.EchoRatio:
     12 cells per radius: at 6 cells the model errors came out 0.25 dB smaller than at
     12 or 18 cells (-0.56, -0.78, -0.81 dB), which would flatter every model.
     """
-    return disk_run(0.05, 12, 1.0, 2500.0)
+    return disk_run(0.05, 12, 1.0, 2500.0, CLICK_BAND_FREQUENCIES)
 
 
 @pytest.fixture(scope="session")
 def disk_10cm() -> fdtd.EchoRatio:
     """A disk of 10 cm radius 1 m ahead, excited over the click band."""
-    return disk_run(0.10, 12, 1.0, 2500.0)
+    return disk_run(0.10, 12, 1.0, 2500.0, CLICK_BAND_FREQUENCIES)
 
 
 @pytest.fixture(scope="session")
@@ -58,9 +72,13 @@ def disk_compact() -> fdtd.EchoRatio:
 
 @pytest.fixture(scope="session")
 def disk_transition() -> fdtd.EchoRatio:
-    """A disk about a wavelength in circumference (ka from about 0.5 to 2.3)."""
-    peak = SPEED_OF_SOUND / (2.0 * 3.141592653589793 * 0.1)
-    h = 0.1 / (10 + fdtd.DISK_EDGE_OFFSET_CELLS)
-    return fdtd.monostatic_echo_ratio(
-        "disk", distance_cells=80, radius_cells=10, h=h, peak_frequency_hz=peak
+    """A disk about a wavelength in circumference, at 11 fixed ka from 1.0 to 1.5."""
+    radius = 0.1
+    ka = np.linspace(1.0, 1.5, 11)
+    return disk_run(
+        radius,
+        10,
+        0.77,
+        SPEED_OF_SOUND / (2.0 * math.pi * radius),
+        ka * SPEED_OF_SOUND / (2.0 * math.pi * radius),
     )
