@@ -179,9 +179,22 @@ COST_SAMPLES = 4096
 
 
 def _candidates() -> dict[str, Any]:
-    from soundsight.acoustics.candidates import second_order  # noqa: PLC0415
+    """Each candidate: its model, and how it renders the W4(b) impulse response."""
+    from soundsight.acoustics.candidates import all_orders, second_order  # noqa: PLC0415
 
-    return {"c1": second_order}
+    def c1_ir(plate: Any, budget_s: float) -> None:  # noqa: ARG001 - C1 is far inside it
+        echo = second_order.plate_echo_second_order(plate, (0, 0, 0), f_max=COST_SAMPLE_RATE / 2)
+        second_order.render_dense(echo, COST_SAMPLE_RATE, COST_SAMPLES)
+
+    def c2_ir(plate: Any, budget_s: float) -> None:
+        all_orders.impulse_response(
+            plate, (0, 0, 0), None, COST_SAMPLE_RATE, COST_SAMPLES, budget_s=budget_s
+        )
+
+    return {
+        "c1": (second_order.SecondOrderPlateModel, c1_ir),
+        "c2": (all_orders.AllOrdersPlateModel, c2_ir),
+    }
 
 
 def w1(model: cn.EchoModel) -> dict[str, Any]:
@@ -204,52 +217,65 @@ def w1(model: cn.EchoModel) -> dict[str, Any]:
     return result
 
 
-def w4(module: Any) -> dict[str, Any]:
-    """W4: median of three timings for the pre-registered cost workloads."""
+def w4(name: str, *, runs: int = 3) -> dict[str, Any]:
+    """W4: median of ``runs`` timings for the pre-registered cost workloads.
+
+    A run of the impulse response that exceeds its budget is stopped there: the budget
+    is pass or fail, and continuing cannot change the verdict. Such runs count as over
+    budget in the median.
+    """
     import time  # noqa: PLC0415
 
-    model = module.SecondOrderPlateModel()
-    plate = module.Plate.regular(
-        COST_TARGET.radius, model.n_sides, centre=(0, 0, COST_TARGET.distance)
-    )
-    timings: dict[str, list[float]] = {"frequency_response_s": [], "impulse_response_s": []}
-    for _ in range(3):
+    from soundsight.acoustics.candidates.all_orders import BudgetExceededError  # noqa: PLC0415
+    from soundsight.acoustics.engine import Plate  # noqa: PLC0415
+
+    model_cls, render_ir = _candidates()[name]
+    model = model_cls()
+    budget_fr = float(_THRESHOLDS["cost_frequency_response_s"])
+    budget_ir = float(_THRESHOLDS["cost_impulse_response_s"])
+    centre = (0.0, 0.0, COST_TARGET.distance)
+    plate = Plate.regular(COST_TARGET.radius, model.n_sides, centre=centre)
+    fr_times, ir_times, stopped = [], [], []
+    for _ in range(runs):
         t = time.perf_counter()
         model.echo_ratio(COST_TARGET, COST_FREQUENCIES_HZ)
-        timings["frequency_response_s"].append(time.perf_counter() - t)
+        fr_times.append(time.perf_counter() - t)
         t = time.perf_counter()
-        echo = module.plate_echo_second_order(plate, (0, 0, 0), f_max=COST_SAMPLE_RATE / 2)
-        module.render_dense(echo, COST_SAMPLE_RATE, COST_SAMPLES)
-        timings["impulse_response_s"].append(time.perf_counter() - t)
-    fr = float(np.median(timings["frequency_response_s"]))
-    ir = float(np.median(timings["impulse_response_s"]))
-    budget_fr = _THRESHOLDS["cost_frequency_response_s"]
-    budget_ir = _THRESHOLDS["cost_impulse_response_s"]
+        try:
+            render_ir(plate, budget_ir)
+        except BudgetExceededError as exc:
+            stopped.append(f"{exc.done} of {exc.total} frequencies")
+            ir_times.append(float("inf"))
+            continue
+        ir_times.append(time.perf_counter() - t)
+    fr, ir = float(np.median(fr_times)), float(np.median(ir_times))
     return {
+        "runs": runs,
         "frequency_response_s": round(fr, 2),
-        "impulse_response_s": round(ir, 2),
+        "impulse_response_s": round(ir, 2) if math.isfinite(ir) else None,
+        "impulse_response_stopped_at_budget": stopped,
         "budget_frequency_response_s": budget_fr,
         "budget_impulse_response_s": budget_ir,
         "accepted": fr <= budget_fr and ir <= budget_ir,
     }
 
 
-def evaluate_candidate(name: str) -> dict[str, Any]:
-    """Run W1, W2 and W4 for a candidate (W3 is its test suite, run by CI)."""
-    module = _candidates()[name]
-    model = module.SecondOrderPlateModel()
-    runs = {run: reference_run(run) for run in RUNS}
-    bands = band_levels(model, runs)
-    return {
-        "candidate": name,
-        "model": model.name,
-        "W1": w1(model),
-        "W2": {
+def evaluate_candidate(name: str, parts: tuple[str, ...] = ("W1", "W2", "W4")) -> dict[str, Any]:
+    """Run the requested workloads for a candidate (W3 is its test suite, run by CI)."""
+    model = _candidates()[name][0]()
+    out: dict[str, Any] = {"candidate": name, "model": model.name}
+    if "W1" in parts:
+        out["W1"] = w1(model)
+    if "W2" in parts:
+        runs = {run: reference_run(run) for run in RUNS}
+        bands = band_levels(model, runs)
+        out["W2"] = {
             "bands": bands,
             "accepted": all(b["level_pass"] and b["spectrum_pass"] for b in bands),
-        },
-        "W4": w4(module),
-    }
+        }
+    if "W4" in parts:
+        out["W4"] = w4(name)
+    return out
 
 
 def compare(fresh: dict[str, Any], stored: dict[str, Any]) -> list[str]:
@@ -270,10 +296,12 @@ def main(argv: list[str] | None = None) -> int:
     """Compute EXP-0004 references; write them or check them."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="compare with the stored file")
-    parser.add_argument("--candidate", help="evaluate a candidate (c1) instead")
+    parser.add_argument("--candidate", help="evaluate a candidate (c1, c2) instead")
+    parser.add_argument("--parts", default="W1,W2,W4", help="workloads to run, e.g. W1,W2")
     args = parser.parse_args(argv)
     if args.candidate:
-        return _run_candidate(args.candidate, check=args.check)
+        parts = tuple(p.strip() for p in args.parts.split(","))
+        return _run_candidate(args.candidate, check=args.check, parts=parts)
     fresh = compute()
     o, k = fresh["reference_overlap"], fresh["reference_compact_limit"]
     print(f"reference self-check, ka {o['ka_band']}: runs differ by {o['difference_db']:+.3f} dB")
@@ -299,37 +327,53 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def _run_candidate(name: str, *, check: bool) -> int:
-    result = evaluate_candidate(name)
-    w1r, w2r, w4r = result["W1"], result["W2"], result["W4"]
-    print(f"W1: levels {w1r['summary']['level_pass']}/18, cues {w1r['summary']['cue_pass']}/15")
-    for b in w2r["bands"]:
+def _run_candidate(name: str, *, check: bool, parts: tuple[str, ...]) -> int:
+    result = evaluate_candidate(name, parts)
+    if "W1" in result:
+        s = result["W1"]["summary"]
+        print(f"W1: levels {s['level_pass']}/18, cues {s['cue_pass']}/15")
+    for b in result.get("W2", {}).get("bands", []):
         print(
             f"W2 ka {b['ka_band']}: level error {b['level_error_db']:+.2f} dB, spectrum "
             f"{100 * b['spectrum_error']:.0f}%"
         )
-    # A notice annotation makes the cost measured on the CI runner visible on the run page.
-    print(
-        f"::notice title=EXP-0004 W4 cost ({name})::frequency response "
-        f"{w4r['frequency_response_s']} s, impulse response {w4r['impulse_response_s']} s"
-    )
-    if check:
-        stored = json.loads(CANDIDATE_RESULTS.read_text(encoding="utf-8"))[name]
-        problems = []
-        for new, old in zip(w2r["bands"], stored["W2"]["bands"], strict=True):
-            if abs(new["model_level_db"] - old["model_level_db"]) > REPRODUCIBILITY_DB:
-                problems.append(f"W2 ka {new['ka_band']}: level differs from stored")
-        if w1r["summary"] != stored["W1"]["summary"]:
-            problems.append("W1 verdicts differ from stored")
-        for p in problems:
-            print(f"EXP-0004: {p}", file=sys.stderr)
-        return 1 if problems else 0
+    if "W4" in result:
+        w = result["W4"]
+        ir = w["impulse_response_s"]
+        ir_text = (
+            f"{ir} s"
+            if ir is not None
+            else (
+                f"over the {w['budget_impulse_response_s']} s budget "
+                f"(stopped at {', '.join(w['impulse_response_stopped_at_budget'])})"
+            )
+        )
+        # A notice annotation makes the cost measured on the CI runner visible on the run page.
+        print(
+            f"::notice title=EXP-0004 W4 cost ({name})::frequency response "
+            f"{w['frequency_response_s']} s, impulse response {ir_text}"
+        )
     stored_all = (
         json.loads(CANDIDATE_RESULTS.read_text(encoding="utf-8"))
         if CANDIDATE_RESULTS.is_file()
         else {}
     )
-    stored_all[name] = result
+    if check:
+        stored = stored_all[name]
+        problems = []
+        if "W2" in result:
+            for new, old in zip(result["W2"]["bands"], stored["W2"]["bands"], strict=True):
+                if abs(new["model_level_db"] - old["model_level_db"]) > REPRODUCIBILITY_DB:
+                    problems.append(f"W2 ka {new['ka_band']}: level differs from stored")
+        if "W1" in result and result["W1"]["summary"] != stored["W1"]["summary"]:
+            problems.append("W1 verdicts differ from stored")
+        if "W4" in result and result["W4"]["accepted"] != stored["W4"]["accepted"]:
+            problems.append("W4 verdict differs from stored")
+        for p in problems:
+            print(f"EXP-0004: {p}", file=sys.stderr)
+        return 1 if problems else 0
+    merged = stored_all.get(name, {}) | result
+    stored_all[name] = merged
     CANDIDATE_RESULTS.write_text(json.dumps(stored_all, indent=2) + "\n", encoding="utf-8")
     print(f"written: {CANDIDATE_RESULTS.relative_to(ROOT)}")
     return 0

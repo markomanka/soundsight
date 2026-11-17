@@ -69,7 +69,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-15, windows-2025]
+        # Pinned on purpose: "latest" labels move without notice. Review when GitHub
+        # releases a new OS image (https://github.com/actions/runner-images).
+        os: [ubuntu-24.04, ubuntu-26.04, macos-26, windows-2025]
         python: ["3.12", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1

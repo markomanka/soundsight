@@ -1,7 +1,9 @@
 # EXP-0004: which higher-order edge diffraction closes the gap?
 
-Status: pre-registered 2026-11-17. **C1 evaluated 2026-11-17: not accepted.** C2 not yet
-built. Results are added below the protocol, which has not been rewritten.
+Status: pre-registered 2026-11-17; C1 and C2 evaluated 2026-11-17. **Concluded: no
+candidate accepted; by decision rule 3, C2 becomes engine increment 2, and the cost of
+its full-band impulse response is the next problem.** Results are below the protocol,
+which has not been rewritten.
 
 ## Question
 
@@ -141,9 +143,8 @@ tests for continuity, reciprocity, scale invariance, quadrature and polygon conv
 and renderer fidelity.
 
 **W4 (cost):** 1.62 s for 20 frequencies and 4.65 s for a full 48 kHz impulse
-response, measured on the development machine (budgets 10 s and 120 s). The official
-figures are those on the CI runner, reported by the Experiments workflow as a notice on
-its run page.
+response, measured on the development machine (budgets 10 s and 120 s). On the CI
+runner (official, Experiments workflow, 2026-11-17): 1.06 s and 2.3 s. Accepted.
 
 **Predictions against outcomes:**
 
@@ -159,3 +160,79 @@ order still matters, which is the regime C2 (all orders) was designed for. Under
 decision rule nothing is adopted until C2 has been evaluated; if C2 is not accepted
 either, C1 becomes engine increment 2, because it passes W3 and more W1 cases than C0
 (15 against 13). Trials of the size-discrimination task that could use C1: 12 of 15.
+
+### C2: edge diffraction of all orders (evaluated 2026-11-17)
+
+Code: `soundsight.acoustics.candidates.all_orders`, frozen at commit `a9589db` before
+any reference echo was compared with it. It solves the edge-source equation of literature
+H3 per frequency; truncated after two orders it reproduces C1 to 0.03%, and the series of
+orders converges onto its solution. Disks are modelled as 48-sided polygons (within 0.1%
+of 96 sides, checked on geometries outside the workloads).
+
+**W1 (EXP-0003 re-run):** all 18 levels and all 15 size cues within tolerance; level
+errors +0.007 to +0.278 dB, cue errors -0.15 to +0.27 dB. Accepted. All 15 trials of the
+size-discrimination task could use it.
+
+| Diameter (cm) | Distance (cm) | Level error (dB) | Verdict |
+| --- | --- | --- | --- |
+| 5.1 | 33 | +0.007 | pass |
+| 9.0 | 33 | +0.051 | pass |
+| 13.5 | 33 | +0.103 | pass |
+| 17.5 | 33 | +0.158 | pass |
+| 22.9 | 33 | +0.076 | pass |
+| 25.4 | 33 | +0.007 | pass |
+| 5.1 | 66 | +0.007 | pass |
+| 9.0 | 66 | +0.055 | pass |
+| 13.5 | 66 | +0.117 | pass |
+| 17.5 | 66 | +0.218 | pass |
+| 22.9 | 66 | +0.228 | pass |
+| 25.4 | 66 | +0.234 | pass |
+| 5.1 | 99 | +0.008 | pass |
+| 9.0 | 99 | +0.056 | pass |
+| 13.5 | 99 | +0.119 | pass |
+| 17.5 | 99 | +0.226 | pass |
+| 22.9 | 99 | +0.256 | pass |
+| 25.4 | 99 | +0.278 | pass |
+
+**W2 (the gap disc):** accepted.
+
+| ka band | Level error (dB) | Spectrum error | Verdict |
+| --- | --- | --- | --- |
+| 0.25 to 0.5 | -0.0039 | 0.27% | pass |
+| 0.5 to 1.0 | -0.0006 | 0.14% | pass |
+| 1.0 to 2.0 | +0.0013 | 0.09% | pass |
+| 2.0 to 4.0 | +0.0419 | 0.46% | pass |
+
+**W3 (physical laws):** accepted. The engine suite passes (one test was added, none
+changed); C2's own tests cover agreement with C1, convergence of the series of orders,
+reciprocity to 1e-8, polygon and quadrature convergence, and impulse-response fidelity.
+
+**W4 (cost):** (a) 1.3 s for 20 frequencies, within 10 s. (b) The full 48 kHz impulse
+response was stopped at the 120 s budget after 578 of 1843 frequencies: **not
+accepted.** The budget is pass or fail, so the run stops where it is exceeded. Higher
+orders stay between -20 and -32 dB of the echo up to at least 12 kHz, so the protocol does
+not allow first-order diffraction to take over below that. Measured on the development
+machine (one run); the Experiments workflow repeats it on the CI runner.
+
+**Predictions against outcomes:**
+
+| Prediction (recorded 2026-11-17) | Outcome |
+| --- | --- |
+| C2 passes W1 and W2 | Confirmed: 18/18 and 15/15; every band within 0.05 dB and 0.5% |
+| C2 meets W4(a) | Confirmed: 1.3 s against 10 s |
+| W4(b): not predicted | Fails: about a third of the frequencies in the 120 s budget |
+
+## Conclusion (2026-11-17)
+
+| Candidate | W1 | W2 | W3 | W4 | Accepted |
+| --- | --- | --- | --- | --- | --- |
+| C1, second order | 15/18 levels | fails below ka 2 | passes | passes | no |
+| C2, all orders | 18/18 levels | passes | passes | fails (b) | no |
+
+No candidate passes every gate. Decision rule 3 applies: the candidate that passes W3 and
+the most W1 cases, **C2, becomes engine increment 2.** No W1 case fails for C2, so no
+trial needs wave-solver echoes any more. The failed gate, the cost of a full-band impulse
+response, is recorded as the next problem: about 3,000 echoes cannot be precomputed
+overnight at the measured rate, but the exercises need far fewer frequencies than a
+generic 48 kHz response, and C2's frequency responses (W4(a)) are cheap. How to render
+exercise audio within budget is the subject of the next experiment.
