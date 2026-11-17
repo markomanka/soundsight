@@ -30,6 +30,7 @@ from soundsight.acoustics.reference.analytic import SPEED_OF_SOUND
 
 ROOT = Path(__file__).resolve().parents[2]
 RESULTS = ROOT / "docs" / "experiments" / "EXP-0004-references.json"
+CANDIDATE_RESULTS = ROOT / "docs" / "experiments" / "EXP-0004-candidates.json"
 _BUDGETS = tomllib.loads((ROOT / "docs" / "quality" / "budgets.toml").read_text(encoding="utf-8"))
 _THRESHOLDS = _BUDGETS["experiments"]["exp0004"]
 BAND_LEVEL_DB: float = _THRESHOLDS["band_level_db"]
@@ -163,6 +164,89 @@ def compute() -> dict[str, Any]:
     }
 
 
+# ---- Candidate evaluation: the same metrics as the baseline, unchanged ---------------
+COST_TARGET = cn.Disk(radius=0.127, distance=0.33)
+COST_FREQUENCIES_HZ = np.linspace(2000.0, 4000.0, 20)
+COST_SAMPLE_RATE = 48_000
+COST_SAMPLES = 4096
+
+
+def _candidates() -> dict[str, Any]:
+    from soundsight.acoustics.candidates import second_order  # noqa: PLC0415
+
+    return {"c1": second_order}
+
+
+def w1(model: cn.EchoModel) -> dict[str, Any]:
+    """W1: EXP-0003 with the candidate, against EXP-0003's stored (CI-checked) references."""
+    from tools.experiments import exp0003  # noqa: PLC0415
+
+    stored = json.loads(exp0003.RESULTS.read_text(encoding="utf-8"))
+    cases = []
+    for c in stored["cases"]:
+        target = cn.Disk(c["acoustic_radius_m"], c["acoustic_distance_m"])
+        level = cn.band_level_db(model.echo_ratio(target, exp0003.BAND_FREQUENCIES_HZ))
+        cases.append(
+            {
+                k: c[k]
+                for k in ("diameter_cm", "distance_cm", "reference_level_db", "acoustic_radius_m")
+            }
+            | {"engine_level_db": round(level, 4)}
+        )
+    result = exp0003.evaluate(cases)
+    s = result["summary"]
+    result["accepted"] = s["level_pass"] == s["n_cases"] and s["cue_pass"] == s["n_cues"]
+    return result
+
+
+def w4(module: Any) -> dict[str, Any]:
+    """W4: median of three timings for the pre-registered cost workloads."""
+    import time  # noqa: PLC0415
+
+    model = module.SecondOrderPlateModel()
+    plate = module.Plate.regular(
+        COST_TARGET.radius, model.n_sides, centre=(0, 0, COST_TARGET.distance)
+    )
+    timings: dict[str, list[float]] = {"frequency_response_s": [], "impulse_response_s": []}
+    for _ in range(3):
+        t = time.perf_counter()
+        model.echo_ratio(COST_TARGET, COST_FREQUENCIES_HZ)
+        timings["frequency_response_s"].append(time.perf_counter() - t)
+        t = time.perf_counter()
+        echo = module.plate_echo_second_order(plate, (0, 0, 0), f_max=COST_SAMPLE_RATE / 2)
+        module.render_dense(echo, COST_SAMPLE_RATE, COST_SAMPLES)
+        timings["impulse_response_s"].append(time.perf_counter() - t)
+    fr = float(np.median(timings["frequency_response_s"]))
+    ir = float(np.median(timings["impulse_response_s"]))
+    budget_fr = _THRESHOLDS["cost_frequency_response_s"]
+    budget_ir = _THRESHOLDS["cost_impulse_response_s"]
+    return {
+        "frequency_response_s": round(fr, 2),
+        "impulse_response_s": round(ir, 2),
+        "budget_frequency_response_s": budget_fr,
+        "budget_impulse_response_s": budget_ir,
+        "accepted": fr <= budget_fr and ir <= budget_ir,
+    }
+
+
+def evaluate_candidate(name: str) -> dict[str, Any]:
+    """Run W1, W2 and W4 for a candidate (W3 is its test suite, run by CI)."""
+    module = _candidates()[name]
+    model = module.SecondOrderPlateModel()
+    runs = {run: reference_run(run) for run in RUNS}
+    bands = band_levels(model, runs)
+    return {
+        "candidate": name,
+        "model": model.name,
+        "W1": w1(model),
+        "W2": {
+            "bands": bands,
+            "accepted": all(b["level_pass"] and b["spectrum_pass"] for b in bands),
+        },
+        "W4": w4(module),
+    }
+
+
 def compare(fresh: dict[str, Any], stored: dict[str, Any]) -> list[str]:
     """Differences between a fresh computation and the stored file."""
     problems = []
@@ -181,7 +265,10 @@ def main(argv: list[str] | None = None) -> int:
     """Compute EXP-0004 references; write them or check them."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="compare with the stored file")
+    parser.add_argument("--candidate", help="evaluate a candidate (c1) instead")
     args = parser.parse_args(argv)
+    if args.candidate:
+        return _run_candidate(args.candidate, check=args.check)
     fresh = compute()
     o, k = fresh["reference_overlap"], fresh["reference_compact_limit"]
     print(f"reference self-check, ka {o['ka_band']}: runs differ by {o['difference_db']:+.3f} dB")
@@ -204,6 +291,42 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     RESULTS.write_text(json.dumps(fresh, indent=2) + "\n", encoding="utf-8")
     print(f"written: {RESULTS.relative_to(ROOT)}")
+    return 0
+
+
+def _run_candidate(name: str, *, check: bool) -> int:
+    result = evaluate_candidate(name)
+    w1r, w2r, w4r = result["W1"], result["W2"], result["W4"]
+    print(f"W1: levels {w1r['summary']['level_pass']}/18, cues {w1r['summary']['cue_pass']}/15")
+    for b in w2r["bands"]:
+        print(
+            f"W2 ka {b['ka_band']}: level error {b['level_error_db']:+.2f} dB, spectrum "
+            f"{100 * b['spectrum_error']:.0f}%"
+        )
+    # A notice annotation makes the cost measured on the CI runner visible on the run page.
+    print(
+        f"::notice title=EXP-0004 W4 cost ({name})::frequency response "
+        f"{w4r['frequency_response_s']} s, impulse response {w4r['impulse_response_s']} s"
+    )
+    if check:
+        stored = json.loads(CANDIDATE_RESULTS.read_text(encoding="utf-8"))[name]
+        problems = []
+        for new, old in zip(w2r["bands"], stored["W2"]["bands"], strict=True):
+            if abs(new["model_level_db"] - old["model_level_db"]) > REPRODUCIBILITY_DB:
+                problems.append(f"W2 ka {new['ka_band']}: level differs from stored")
+        if w1r["summary"] != stored["W1"]["summary"]:
+            problems.append("W1 verdicts differ from stored")
+        for p in problems:
+            print(f"EXP-0004: {p}", file=sys.stderr)
+        return 1 if problems else 0
+    stored_all = (
+        json.loads(CANDIDATE_RESULTS.read_text(encoding="utf-8"))
+        if CANDIDATE_RESULTS.is_file()
+        else {}
+    )
+    stored_all[name] = result
+    CANDIDATE_RESULTS.write_text(json.dumps(stored_all, indent=2) + "\n", encoding="utf-8")
+    print(f"written: {CANDIDATE_RESULTS.relative_to(ROOT)}")
     return 0
 
 

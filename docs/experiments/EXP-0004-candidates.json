@@ -1,0 +1,387 @@
+{
+  "c1": {
+    "candidate": "c1",
+    "model": "candidate-c1",
+    "W1": {
+      "experiment": "EXP-0003",
+      "thresholds": {
+        "level_db": 1.0,
+        "cue_db": 1.5
+      },
+      "engine": "engine",
+      "cases": [
+        {
+          "diameter_cm": 5.1,
+          "distance_cm": 33.0,
+          "reference_level_db": -19.2668,
+          "acoustic_radius_m": 0.0255,
+          "engine_level_db": -17.9339,
+          "level_error_db": 1.3329,
+          "level_pass": false
+        },
+        {
+          "diameter_cm": 9.0,
+          "distance_cm": 33.0,
+          "reference_level_db": -7.4396,
+          "acoustic_radius_m": 0.045,
+          "engine_level_db": -7.4306,
+          "level_error_db": 0.009,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 13.5,
+          "distance_cm": 33.0,
+          "reference_level_db": -2.0701,
+          "acoustic_radius_m": 0.0675,
+          "engine_level_db": -1.9772,
+          "level_error_db": 0.0929,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 17.5,
+          "distance_cm": 33.0,
+          "reference_level_db": 2.2217,
+          "acoustic_radius_m": 0.0875,
+          "engine_level_db": 2.3708,
+          "level_error_db": 0.1491,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 22.9,
+          "distance_cm": 33.0,
+          "reference_level_db": 5.6847,
+          "acoustic_radius_m": 0.11449999999999998,
+          "engine_level_db": 5.771,
+          "level_error_db": 0.0863,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 25.4,
+          "distance_cm": 33.0,
+          "reference_level_db": 6.615,
+          "acoustic_radius_m": 0.127,
+          "engine_level_db": 6.6294,
+          "level_error_db": 0.0144,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 5.1,
+          "distance_cm": 66.0,
+          "reference_level_db": -25.2865,
+          "acoustic_radius_m": 0.0255,
+          "engine_level_db": -23.9119,
+          "level_error_db": 1.3746,
+          "level_pass": false
+        },
+        {
+          "diameter_cm": 9.0,
+          "distance_cm": 66.0,
+          "reference_level_db": -13.4392,
+          "acoustic_radius_m": 0.045,
+          "engine_level_db": -13.4289,
+          "level_error_db": 0.0103,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 13.5,
+          "distance_cm": 66.0,
+          "reference_level_db": -8.1097,
+          "acoustic_radius_m": 0.0675,
+          "engine_level_db": -8.0068,
+          "level_error_db": 0.1029,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 17.5,
+          "distance_cm": 66.0,
+          "reference_level_db": -3.5839,
+          "acoustic_radius_m": 0.0875,
+          "engine_level_db": -3.3788,
+          "level_error_db": 0.2051,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 22.9,
+          "distance_cm": 66.0,
+          "reference_level_db": 0.8002,
+          "acoustic_radius_m": 0.11449999999999998,
+          "engine_level_db": 1.0318,
+          "level_error_db": 0.2316,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 25.4,
+          "distance_cm": 66.0,
+          "reference_level_db": 2.4624,
+          "acoustic_radius_m": 0.127,
+          "engine_level_db": 2.6975,
+          "level_error_db": 0.2351,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 5.1,
+          "distance_cm": 99.0,
+          "reference_level_db": -28.8104,
+          "acoustic_radius_m": 0.0255,
+          "engine_level_db": -27.4227,
+          "level_error_db": 1.3877,
+          "level_pass": false
+        },
+        {
+          "diameter_cm": 9.0,
+          "distance_cm": 99.0,
+          "reference_level_db": -16.9343,
+          "acoustic_radius_m": 0.045,
+          "engine_level_db": -16.9244,
+          "level_error_db": 0.0099,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 13.5,
+          "distance_cm": 99.0,
+          "reference_level_db": -11.7342,
+          "acoustic_radius_m": 0.0675,
+          "engine_level_db": -11.6315,
+          "level_error_db": 0.1027,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 17.5,
+          "distance_cm": 99.0,
+          "reference_level_db": -7.0818,
+          "acoustic_radius_m": 0.0875,
+          "engine_level_db": -6.8691,
+          "level_error_db": 0.2127,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 22.9,
+          "distance_cm": 99.0,
+          "reference_level_db": -2.6751,
+          "acoustic_radius_m": 0.11449999999999998,
+          "engine_level_db": -2.4174,
+          "level_error_db": 0.2577,
+          "level_pass": true
+        },
+        {
+          "diameter_cm": 25.4,
+          "distance_cm": 99.0,
+          "reference_level_db": -0.8331,
+          "acoustic_radius_m": 0.127,
+          "engine_level_db": -0.5561,
+          "level_error_db": 0.277,
+          "level_pass": true
+        }
+      ],
+      "cues": [
+        {
+          "distance_cm": 33.0,
+          "comparison_diameter_cm": 5.1,
+          "reference_cue_db": 25.8818,
+          "engine_cue_db": 24.5633,
+          "cue_error_db": -1.3185,
+          "cue_pass": true,
+          "trial_uses_engine": false
+        },
+        {
+          "distance_cm": 33.0,
+          "comparison_diameter_cm": 9.0,
+          "reference_cue_db": 14.0546,
+          "engine_cue_db": 14.06,
+          "cue_error_db": 0.0054,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 33.0,
+          "comparison_diameter_cm": 13.5,
+          "reference_cue_db": 8.6851,
+          "engine_cue_db": 8.6066,
+          "cue_error_db": -0.0785,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 33.0,
+          "comparison_diameter_cm": 17.5,
+          "reference_cue_db": 4.3933,
+          "engine_cue_db": 4.2586,
+          "cue_error_db": -0.1347,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 33.0,
+          "comparison_diameter_cm": 22.9,
+          "reference_cue_db": 0.9303,
+          "engine_cue_db": 0.8584,
+          "cue_error_db": -0.0719,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 66.0,
+          "comparison_diameter_cm": 5.1,
+          "reference_cue_db": 27.7489,
+          "engine_cue_db": 26.6094,
+          "cue_error_db": -1.1395,
+          "cue_pass": true,
+          "trial_uses_engine": false
+        },
+        {
+          "distance_cm": 66.0,
+          "comparison_diameter_cm": 9.0,
+          "reference_cue_db": 15.9016,
+          "engine_cue_db": 16.1264,
+          "cue_error_db": 0.2248,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 66.0,
+          "comparison_diameter_cm": 13.5,
+          "reference_cue_db": 10.5721,
+          "engine_cue_db": 10.7043,
+          "cue_error_db": 0.1322,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 66.0,
+          "comparison_diameter_cm": 17.5,
+          "reference_cue_db": 6.0463,
+          "engine_cue_db": 6.0763,
+          "cue_error_db": 0.03,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 66.0,
+          "comparison_diameter_cm": 22.9,
+          "reference_cue_db": 1.6622,
+          "engine_cue_db": 1.6657,
+          "cue_error_db": 0.0035,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 99.0,
+          "comparison_diameter_cm": 5.1,
+          "reference_cue_db": 27.9773,
+          "engine_cue_db": 26.8666,
+          "cue_error_db": -1.1107,
+          "cue_pass": true,
+          "trial_uses_engine": false
+        },
+        {
+          "distance_cm": 99.0,
+          "comparison_diameter_cm": 9.0,
+          "reference_cue_db": 16.1012,
+          "engine_cue_db": 16.3683,
+          "cue_error_db": 0.2671,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 99.0,
+          "comparison_diameter_cm": 13.5,
+          "reference_cue_db": 10.9011,
+          "engine_cue_db": 11.0754,
+          "cue_error_db": 0.1743,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 99.0,
+          "comparison_diameter_cm": 17.5,
+          "reference_cue_db": 6.2487,
+          "engine_cue_db": 6.313,
+          "cue_error_db": 0.0643,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        },
+        {
+          "distance_cm": 99.0,
+          "comparison_diameter_cm": 22.9,
+          "reference_cue_db": 1.842,
+          "engine_cue_db": 1.8613,
+          "cue_error_db": 0.0193,
+          "cue_pass": true,
+          "trial_uses_engine": true
+        }
+      ],
+      "summary": {
+        "level_pass": 15,
+        "cue_pass": 15,
+        "trials_using_engine": 12,
+        "n_cases": 18,
+        "n_cues": 15
+      },
+      "accepted": false
+    },
+    "W2": {
+      "bands": [
+        {
+          "ka_band": [
+            0.25,
+            0.5
+          ],
+          "n_frequencies": 12,
+          "reference_level_db": -40.6865,
+          "model_level_db": -23.3586,
+          "level_error_db": 17.328,
+          "level_pass": false,
+          "spectrum_error": 9.9997,
+          "spectrum_pass": false
+        },
+        {
+          "ka_band": [
+            0.5,
+            1.0
+          ],
+          "n_frequencies": 12,
+          "reference_level_db": -28.3983,
+          "model_level_db": -23.0754,
+          "level_error_db": 5.3228,
+          "level_pass": false,
+          "spectrum_error": 2.3956,
+          "spectrum_pass": false
+        },
+        {
+          "ka_band": [
+            1.0,
+            2.0
+          ],
+          "n_frequencies": 12,
+          "reference_level_db": -13.979,
+          "model_level_db": -12.9467,
+          "level_error_db": 1.0323,
+          "level_pass": false,
+          "spectrum_error": 0.3336,
+          "spectrum_pass": false
+        },
+        {
+          "ka_band": [
+            2.0,
+            4.0
+          ],
+          "n_frequencies": 12,
+          "reference_level_db": -7.1187,
+          "model_level_db": -7.1972,
+          "level_error_db": -0.0784,
+          "level_pass": true,
+          "spectrum_error": 0.0246,
+          "spectrum_pass": true
+        }
+      ],
+      "accepted": false
+    },
+    "W4": {
+      "frequency_response_s": 1.62,
+      "impulse_response_s": 4.65,
+      "budget_frequency_response_s": 10.0,
+      "budget_impulse_response_s": 120.0,
+      "accepted": true
+    }
+  }
+}

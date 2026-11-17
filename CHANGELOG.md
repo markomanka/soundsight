@@ -8,6 +8,12 @@ All notable changes to this project are recorded here. The format follows
 
 ### Added
 
+- EXP-0004 candidate C1, second-order edge diffraction
+  (`soundsight.acoustics.candidates.second_order`), with its weight fixed by a continuity
+  test and a fast renderer for millions of arrivals. Evaluated as pre-registered: 15 of
+  18 EXP-0003 levels and all 15 size cues, but not accepted (the 5.1 cm disc and the gap
+  disc below ka 2 still fail). Not used for exercises until EXP-0004 concludes.
+
 - EXP-0004 pre-registered: the choice between second-order edge diffraction and the
   edge-source integral equation of all orders, with fixed references (checked against
   each other and against the exact small-disk limit), baseline, thresholds and cost

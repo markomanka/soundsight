@@ -10,6 +10,7 @@ on:
     paths:
       - "src/soundsight/acoustics/**"
       - "tools/experiments/**"
+      - "src/soundsight/acoustics/candidates/**"
       - "docs/experiments/EXP-0003-*"
       - "docs/experiments/EXP-0004-*"
       - "docs/quality/budgets.toml"
@@ -18,6 +19,7 @@ on:
     paths:
       - "src/soundsight/acoustics/**"
       - "tools/experiments/**"
+      - "src/soundsight/acoustics/candidates/**"
       - "docs/experiments/EXP-0003-*"
       - "docs/experiments/EXP-0004-*"
       - "docs/quality/budgets.toml"
@@ -66,3 +68,5 @@ jobs:
       - run: uv sync --locked --no-default-groups --group test
       - name: Recompute the references, check their validity, compare with the stored file
         run: uv run --no-sync python tools/experiments/exp0004.py --check
+      - name: Re-evaluate candidate C1 and report its cost on this runner (W4)
+        run: uv run --no-sync python tools/experiments/exp0004.py --candidate c1 --check
