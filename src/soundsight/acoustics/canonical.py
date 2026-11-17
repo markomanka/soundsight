@@ -19,6 +19,10 @@ approximation, so the test suite can show what each level gets right and wrong:
     Mirror reflection plus first-order diffraction with the correct rim coefficient.
 ``CompactModel``
     Long-wavelength (Rayleigh) scattering by objects much smaller than the wavelength.
+``PlateEngineModel``
+    The production engine (:mod:`soundsight.acoustics.engine`): image source plus
+    first-order edge diffraction for any thin convex plate. A disk is modelled as a
+    regular polygon of equal area.
 """
 
 from __future__ import annotations
@@ -29,6 +33,7 @@ from typing import Protocol, runtime_checkable
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
+from soundsight.acoustics import engine
 from soundsight.acoustics.reference import analytic
 from soundsight.acoustics.reference.analytic import SPEED_OF_SOUND, ComplexArray
 
@@ -156,6 +161,31 @@ class CompactModel:
         if isinstance(target, Sphere):
             return analytic.compact_sphere_echo_ratio(
                 frequency_hz, target.radius, target.distance + target.radius, self.c
+            )
+        raise UnsupportedTargetError(f"{self.name} has no model for {type(target).__name__}")
+
+
+@dataclass(frozen=True)
+class PlateEngineModel:
+    """The production engine on canonical targets (disk as a regular polygon)."""
+
+    c: float = SPEED_OF_SOUND
+    n_sides: int = 96
+    name: str = "engine"
+
+    def echo_ratio(self, target: Target, frequency_hz: ArrayLike) -> ComplexArray:
+        """Return the engine's echo divided by that of a wall at the same distance."""
+        f = np.atleast_1d(np.asarray(frequency_hz, dtype=np.float64))
+        if isinstance(target, Wall):
+            return _ones(f)
+        if isinstance(target, Disk):
+            plate = engine.Plate.regular(
+                target.radius, self.n_sides, centre=(0.0, 0.0, target.distance)
+            )
+            arrivals = engine.plate_echo(plate, (0.0, 0.0, 0.0), f_max=float(f.max()), c=self.c)
+            return np.asarray(
+                arrivals.frequency_response(f) / analytic.plane_echo(f, target.distance, self.c),
+                dtype=np.complex128,
             )
         raise UnsupportedTargetError(f"{self.name} has no model for {type(target).__name__}")
 

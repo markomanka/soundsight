@@ -43,8 +43,13 @@ Status: [x] met and enforced by CI; [ ] open.
 
 - [x] Reference ladder in CI: exact solutions, a wave solver validated against them, and
       a conformance matrix with a declared verdict per model and problem.
-- [ ] EXP-0003: the engine reproduces the size-discrimination discs of A3 within the
-      pre-registered tolerances, or the failing cases use wave-solver responses.
+- [x] EXP-0003 run: 12 of 18 levels and 12 of 15 size cues within the pre-registered
+      tolerances; the 6 trials with 5.1 and 9.0 cm discs use wave-solver echoes. Re-run
+      weekly and on every change to the acoustics code.
+- [x] Engine laws enforced by CI: continuity at reflection boundaries, reciprocity,
+      scale invariance, wall limit, convergence, impulse-response fidelity.
+- [ ] Higher-order diffraction brings the 5.1 and 9.0 cm discs within tolerance
+      (EXP-0003 re-run unchanged).
 - [ ] Canonical problems added, each with a reference, for: the 80 x 20 cm rectangle at
       four orientations (A3); a thin pole; an object off axis; two ears.
 - [ ] Measured rung: simulated against measured impulse responses for at least one
@@ -105,6 +110,7 @@ Status: [x] met and enforced by CI; [ ] open.
 | **Dependency licence allowlist** (`tools/check_dependency_licenses.py`): any dependency with an unknown or unlisted licence fails the build | Added with this document |
 | **Evidence citations** (`tools/check_docs.py`): every decision record cites existing literature and experiments | Added with this document |
 | **Budgets in one file** read by the tests | Added with this document |
+| **Pre-registered experiments re-run** (`experiments.yml`): EXP-0003 weekly and on every change to the acoustics code, failing if any stored level moves by more than 0.02 dB or any verdict changes | Added with engine increment 1 |
 | Stored exercise files with hashes | With the first exercise pack (S2) |
 | Performance budgets, failing on regression | With the first code that has a budget (S3) |
 | Nightly determinism job across platforms | With the engine (S2); today the matrix already runs identical numeric assertions on three systems |

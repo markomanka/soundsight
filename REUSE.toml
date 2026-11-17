@@ -6,6 +6,7 @@ path = [
     "**/*.md",
     "**/*.toml",
     "**/*.yml",
+    "**/*.json",
     "uv.lock",
     ".gitignore",
     ".gitattributes",

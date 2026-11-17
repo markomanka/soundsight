@@ -26,3 +26,8 @@ compact_disk_spectrum_error = 0.05
 # Where clicks carry most of their energy (literature B1). Fixed before measuring.
 low = 2000.0
 high = 4000.0
+
+[experiments]
+# A re-run of an experiment must reproduce its stored levels to this precision. A
+# numerical tolerance (platform and library differences), not a perceptual one.
+reproducibility_db = 0.02

@@ -8,6 +8,13 @@ All notable changes to this project are recorded here. The format follows
 
 ### Added
 
+- Acoustic engine, increment 1 (`soundsight.acoustics.engine`): echoes of a thin convex
+  rigid plate by image source plus first-order Biot-Tolstoy-Medwin edge diffraction, as
+  exact frequency responses or impulse responses at any sample rate; validated by
+  physical-law tests and admitted through the conformance matrix.
+- EXP-0003 run as pre-registered: the engine is valid for 9 of 15 trials of the
+  size-discrimination task; a CI workflow re-runs it weekly and on acoustics changes.
+
 - Acoustics foundation: the decision to use geometric acoustics with edge diffraction
   as the production engine and a wave solver as referee (docs/decisions/0002), exact
   reference solutions, an axisymmetric wave solver validated against them, canonical
@@ -32,6 +39,9 @@ All notable changes to this project are recorded here. The format follows
   a dependency audit.
 
 ### Fixed
+
+- The 5 cm reference disk used by the conformance tests ran on a grid coarse enough to
+  flatter every model by 0.25 dB; it now uses 12 cells per radius.
 
 - The next-Python job now checks whether the scientific stack runs on that release at all,
   and reports plainly when it does not, instead of failing for reasons unrelated to our code.

@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -11,6 +12,7 @@ from tools import check_dependency_licenses as licences
 from tools import check_docs as docs
 from tools import check_repo_hygiene as hygiene
 from tools import fetch_legacy_click as fetch
+from tools.experiments import exp0003
 
 
 def test_hygiene_accepts_source(tmp_path: Path) -> None:
@@ -247,3 +249,83 @@ def test_missing_register_and_missing_decisions(tmp_path: Path) -> None:
 
 def test_this_repository_cites_its_evidence() -> None:
     assert docs.check_repository() == []
+
+
+# ---------------------------------------------------------------- EXP-0003 runner
+
+
+def test_exp0003_reference_grid_meets_both_resolution_rules() -> None:
+    for diameter in exp0003.DIAMETERS_CM:
+        radius = diameter / 200
+        cells, h = exp0003.reference_grid(radius)
+        assert cells >= exp0003.MIN_CELLS_PER_RADIUS
+        assert (343.0 / 4000.0) / h >= exp0003.MIN_CELLS_PER_WAVELENGTH_AT_4KHZ
+
+
+def test_exp0003_thresholds_come_from_the_budgets_file() -> None:
+    assert exp0003.LEVEL_THRESHOLD_DB == 1.0
+    assert exp0003.CUE_THRESHOLD_DB == 1.5
+
+
+def _case(diameter: float, distance: float, ref: float, eng: float) -> dict[str, object]:
+    return {
+        "diameter_cm": diameter,
+        "distance_cm": distance,
+        "reference_level_db": ref,
+        "engine_level_db": eng,
+    }
+
+
+def test_exp0003_decision_rule_per_trial() -> None:
+    cases = []
+    for distance in exp0003.DISTANCES_CM:
+        for diameter in exp0003.DIAMETERS_CM:
+            error = 2.0 if diameter == 5.1 else 0.1  # only the smallest disc is wrong
+            cases.append(_case(diameter, distance, -diameter, -diameter + error))
+    result = exp0003.evaluate(cases)
+    s = result["summary"]
+    assert (s["level_pass"], s["n_cases"]) == (15, 18)
+    assert (s["cue_pass"], s["n_cues"]) == (12, 15)
+    assert s["trials_using_engine"] == 12  # reference disc stays usable: per-trial reading
+
+
+def _full_grid() -> list[dict[str, object]]:
+    return [
+        _case(diameter, distance, -diameter, -diameter + 0.1)
+        for distance in exp0003.DISTANCES_CM
+        for diameter in exp0003.DIAMETERS_CM
+    ]
+
+
+def test_exp0003_compare_detects_drift_and_verdict_changes() -> None:
+    stored = exp0003.evaluate(_full_grid())
+    assert exp0003.compare(exp0003.evaluate(_full_grid()), stored) == []
+    drifted = _full_grid()
+    drifted[2]["engine_level_db"] = -13.5 - 1.6  # moves 1.7 dB and flips the verdict
+    problems = exp0003.compare(exp0003.evaluate(drifted), stored)
+    assert any("differs from stored" in p for p in problems)
+    assert any("verdict changed" in p for p in problems)
+    missing = exp0003.evaluate(_full_grid())
+    missing["cases"] = missing["cases"][:-1]
+    assert any("is new" in p for p in exp0003.compare(stored, missing))
+
+
+def test_exp0003_stored_results_are_complete_and_consistent() -> None:
+    stored = json.loads(exp0003.RESULTS.read_text(encoding="utf-8"))
+    assert stored["summary"]["n_cases"] == 18
+    recomputed = exp0003.evaluate(
+        [
+            {
+                k: c[k]
+                for k in (
+                    "diameter_cm",
+                    "distance_cm",
+                    "reference_level_db",
+                    "engine_level_db",
+                    "acoustic_radius_m",
+                )
+            }
+            for c in stored["cases"]
+        ]
+    )
+    assert recomputed["summary"] == stored["summary"]

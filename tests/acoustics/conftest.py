@@ -26,13 +26,17 @@ def disk_run(
 
 @pytest.fixture(scope="session")
 def disk_5cm() -> fdtd.EchoRatio:
-    """A 5 cm disk 1 m ahead, excited over the click band."""
-    return disk_run(0.05, 6, 1.0, 2500.0)
+    """A disk of 5 cm radius 1 m ahead, excited over the click band.
+
+    12 cells per radius: at 6 cells the model errors came out 0.25 dB smaller than at
+    12 or 18 cells (-0.56, -0.78, -0.81 dB), which would flatter every model.
+    """
+    return disk_run(0.05, 12, 1.0, 2500.0)
 
 
 @pytest.fixture(scope="session")
 def disk_10cm() -> fdtd.EchoRatio:
-    """A 10 cm disk 1 m ahead, excited over the click band."""
+    """A disk of 10 cm radius 1 m ahead, excited over the click band."""
     return disk_run(0.10, 12, 1.0, 2500.0)
 
 
