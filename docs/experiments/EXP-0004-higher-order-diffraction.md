@@ -1,8 +1,7 @@
 # EXP-0004: which higher-order edge diffraction closes the gap?
 
-Status: **pre-registered 2026-11-17.** Protocol, references and baseline measurement are
-fixed; no candidate exists yet. Results will be added below the protocol, which will not
-be rewritten.
+Status: pre-registered 2026-11-17. **C1 evaluated 2026-11-17: not accepted.** C2 not yet
+built. Results are added below the protocol, which has not been rewritten.
 
 ## Question
 
@@ -96,4 +95,67 @@ measured the baseline.
 
 ## Results
 
-Not yet run: no candidate exists.
+### C1: second-order edge diffraction (evaluated 2026-11-17)
+
+Code: `soundsight.acoustics.candidates.second_order`, frozen at commit `d813deb`
+before any reference echo was compared with it. Its one free choice, the weight of the
+second-order term, was fixed by physics: second-order diffraction must cancel the jump of
+first-order diffraction across the plane of the plate beyond an edge, and a weight of 1
+does so to within 0.06% at 0.1 mm from the plane, at every frequency tested.
+
+**W1 (EXP-0003 re-run):** 15 of 18 levels and 15 of 15 size cues within tolerance
+(first-order engine: 13 and 12). Not accepted.
+
+| Diameter (cm) | Distance (cm) | Level error (dB) | Verdict |
+| --- | --- | --- | --- |
+| 5.1 | 33 | +1.33 | FAIL |
+| 9.0 | 33 | +0.01 | pass |
+| 13.5 | 33 | +0.09 | pass |
+| 17.5 | 33 | +0.15 | pass |
+| 22.9 | 33 | +0.09 | pass |
+| 25.4 | 33 | +0.01 | pass |
+| 5.1 | 66 | +1.37 | FAIL |
+| 9.0 | 66 | +0.01 | pass |
+| 13.5 | 66 | +0.10 | pass |
+| 17.5 | 66 | +0.21 | pass |
+| 22.9 | 66 | +0.23 | pass |
+| 25.4 | 66 | +0.24 | pass |
+| 5.1 | 99 | +1.39 | FAIL |
+| 9.0 | 99 | +0.01 | pass |
+| 13.5 | 99 | +0.10 | pass |
+| 17.5 | 99 | +0.21 | pass |
+| 22.9 | 99 | +0.26 | pass |
+| 25.4 | 99 | +0.28 | pass |
+
+**W2 (the gap disc):** not accepted.
+
+| ka band | Level error (dB) | Spectrum error | Verdict |
+| --- | --- | --- | --- |
+| 0.25 to 0.5 | +17.33 | 1000% | FAIL |
+| 0.5 to 1.0 | +5.32 | 240% | FAIL |
+| 1.0 to 2.0 | +1.03 | 33% | FAIL |
+| 2.0 to 4.0 | -0.08 | 2% | pass |
+
+**W3 (physical laws):** accepted. The engine suite passes unchanged, and C1 has its own
+tests for continuity, reciprocity, scale invariance, quadrature and polygon convergence,
+and renderer fidelity.
+
+**W4 (cost):** 1.62 s for 20 frequencies and 4.65 s for a full 48 kHz impulse
+response, measured on the development machine (budgets 10 s and 120 s). The official
+figures are those on the CI runner, reported by the Experiments workflow as a notice on
+its run page.
+
+**Predictions against outcomes:**
+
+| Prediction (recorded 2026-11-17) | Outcome |
+| --- | --- |
+| C1 brings the 9.0 cm disc within tolerance at all distances | Confirmed: error +0.01 dB at all three distances (first order: down to -1.12 dB) |
+| ...but not the 5.1 cm disc | Confirmed: +1.33 to +1.39 dB (first order: +1.9 to +2.0 dB) |
+| C1 fails W2 below ka 1 | Confirmed: +17.3 and +5.3 dB; also fails narrowly from ka 1 to 2 (+1.03 dB, 33% spectrum error), which was not predicted |
+
+**What it shows.** Second order is enough for objects more than about two wavelengths
+around: from ka 2 to 4 its spectrum error falls from 17% to 2%. Below that, each further
+order still matters, which is the regime C2 (all orders) was designed for. Under the
+decision rule nothing is adopted until C2 has been evaluated; if C2 is not accepted
+either, C1 becomes engine increment 2, because it passes W3 and more W1 cases than C0
+(15 against 13). Trials of the size-discrimination task that could use C1: 12 of 15.

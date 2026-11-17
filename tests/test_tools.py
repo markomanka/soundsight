@@ -363,3 +363,36 @@ def test_exp0004_compare_detects_drift() -> None:
     problems = exp0004.compare(drifted, stored)
     assert any("differs" in p for p in problems)
     assert any("disagree" in p for p in problems)
+
+
+def test_exp0004_candidate_results_are_complete() -> None:
+    stored = json.loads(exp0004.CANDIDATE_RESULTS.read_text(encoding="utf-8"))["c1"]
+    assert stored["W1"]["summary"]["n_cases"] == 18
+    assert len(stored["W2"]["bands"]) == 4
+    assert {"frequency_response_s", "impulse_response_s", "accepted"} <= stored["W4"].keys()
+    # Recorded verdicts follow from the recorded numbers.
+    assert stored["W1"]["accepted"] == (
+        stored["W1"]["summary"]["level_pass"] == 18 and stored["W1"]["summary"]["cue_pass"] == 15
+    )
+    assert stored["W2"]["accepted"] == all(
+        b["level_pass"] and b["spectrum_pass"] for b in stored["W2"]["bands"]
+    )
+
+
+@pytest.mark.parametrize("script", ["exp0003.py", "exp0004.py"])
+def test_experiment_scripts_run_the_way_ci_runs_them(script: str) -> None:
+    """CI runs the scripts as plain files, with only their own folder on the import path
+    (a missing import there once failed CI while passing locally)."""
+    import subprocess  # noqa: PLC0415
+    import sys  # noqa: PLC0415
+
+    root = Path(__file__).resolve().parents[1]
+    result = subprocess.run(
+        [sys.executable, str(root / "tools" / "experiments" / script), "--help"],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=root,
+        env={k: v for k, v in __import__("os").environ.items() if k != "PYTHONPATH"},
+    )
+    assert result.returncode == 0, result.stderr
