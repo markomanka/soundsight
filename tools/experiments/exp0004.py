@@ -29,6 +29,13 @@ from soundsight.acoustics.reference import fdtd
 from soundsight.acoustics.reference.analytic import SPEED_OF_SOUND
 
 ROOT = Path(__file__).resolve().parents[2]
+# Run as a script (python tools/experiments/exp0004.py), Python puts only this folder on
+# the import path; the repository root is needed for the sibling experiment module.
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from tools.experiments import exp0003  # noqa: E402
+
 RESULTS = ROOT / "docs" / "experiments" / "EXP-0004-references.json"
 CANDIDATE_RESULTS = ROOT / "docs" / "experiments" / "EXP-0004-candidates.json"
 _BUDGETS = tomllib.loads((ROOT / "docs" / "quality" / "budgets.toml").read_text(encoding="utf-8"))
@@ -179,8 +186,6 @@ def _candidates() -> dict[str, Any]:
 
 def w1(model: cn.EchoModel) -> dict[str, Any]:
     """W1: EXP-0003 with the candidate, against EXP-0003's stored (CI-checked) references."""
-    from tools.experiments import exp0003  # noqa: PLC0415
-
     stored = json.loads(exp0003.RESULTS.read_text(encoding="utf-8"))
     cases = []
     for c in stored["cases"]:

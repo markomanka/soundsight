@@ -377,3 +377,22 @@ def test_exp0004_candidate_results_are_complete() -> None:
     assert stored["W2"]["accepted"] == all(
         b["level_pass"] and b["spectrum_pass"] for b in stored["W2"]["bands"]
     )
+
+
+@pytest.mark.parametrize("script", ["exp0003.py", "exp0004.py"])
+def test_experiment_scripts_run_the_way_ci_runs_them(script: str) -> None:
+    """CI runs the scripts as plain files, with only their own folder on the import path
+    (a missing import there once failed CI while passing locally)."""
+    import subprocess  # noqa: PLC0415
+    import sys  # noqa: PLC0415
+
+    root = Path(__file__).resolve().parents[1]
+    result = subprocess.run(
+        [sys.executable, str(root / "tools" / "experiments" / script), "--help"],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=root,
+        env={k: v for k, v in __import__("os").environ.items() if k != "PYTHONPATH"},
+    )
+    assert result.returncode == 0, result.stderr
