@@ -38,7 +38,8 @@ until calibrated with instructors.
   (EXP-0003) it is valid for 10 of 15 trials, and the rest use wave-solver echoes. EXP-0004
   chose diffraction of all orders (C2) as increment 2: valid for all 15 trials, but too
   slow for full-band impulse responses as it stands. Next: rendering exercise audio with
-  it within budget, then several objects with occlusion.
+  it within budget (EXP-0005, whose baseline renderer was contributed by Kimi), then
+  several objects with occlusion.
 - Exercises rendered in advance and played over headphones, triggered by the user, with
   the user's own recorded click. Template: the tasks of A3 (size discrimination,
   orientation, maze navigation with mirror-image transfer mazes, a no-click control).

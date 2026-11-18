@@ -8,6 +8,13 @@ All notable changes to this project are recorded here. The format follows
 
 ### Added
 
+- Exercise trial renderer (`soundsight.exercise.render`): a click and its echo from one
+  disc, with a report of the facts and a screen-reader text. Contributed by Kimi
+  (kimi.ai), revised on review (explicit click reference distance, corrected physics in
+  the tests, exact fidelity test); candidate R1 of EXP-0005.
+- EXP-0005 pre-registered: rendering exercise trials with the accuracy of engine
+  increment 2 within a cost budget.
+
 - EXP-0004 candidate C2, edge diffraction of all orders
   (`soundsight.acoustics.candidates.all_orders`): 18 of 18 EXP-0003 levels, every band of
   the gap disc within 0.05 dB, but a full 48 kHz impulse response exceeds the cost budget.

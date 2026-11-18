@@ -74,7 +74,8 @@ SoundSight began as a project of the SCImPULSE Foundation. The quality-gate stru
 the pre-registration rule for experiments, the dependency-licence allowlist, the
 evidence-citation check and the first draft of the research base were contributed by
 Kimi (kimi.ai) in a working session with the project lead on 2026-11-15; they were then
-reviewed, checked against PubMed and revised. Much of the code and documentation was
+reviewed, checked against PubMed and revised. Kimi also contributed the first exercise
+trial renderer (2026-11-18), integrated after review as candidate R1 of EXP-0005. Much of the code and documentation was
 written with Claude (Anthropic).
 
 ## Licence

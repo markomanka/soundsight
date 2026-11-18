@@ -48,3 +48,11 @@ reference_compact_limit = 0.03
 # modest hardware (200 x 120 s is under 7 hours).
 cost_frequency_response_s = 10.0
 cost_impulse_response_s = 120.0
+
+[experiments.exp0005]
+# Pre-registered 2026-11-18. Click-weighted spectral error of a trial's echo against C2.
+weighted_error_db = -25.0
+# Echo level from 2 to 4 kHz against C2, as in EXP-0003.
+band_level_db = 1.0
+# Median of three renders of the costliest trial on a standard GitHub runner.
+cost_trial_s = 120.0
