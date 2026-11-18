@@ -48,9 +48,10 @@ Status: [x] met and enforced by CI; [ ] open.
       wave-solver echoes. Re-run weekly and on every change to the acoustics code.
 - [x] Engine laws enforced by CI: continuity at reflection boundaries, reciprocity,
       scale invariance, wall limit, convergence, impulse-response fidelity.
-- [ ] Higher-order diffraction chosen and accepted by EXP-0004 (pre-registered): all of
-      EXP-0003 within tolerance, the gap disc within 1 dB and 10% in every band from
-      ka 0.25 to 4, physical laws intact, within the cost budget.
+- [x] EXP-0004 concluded: C2 (all orders) passes all of EXP-0003, the gap disc in every
+      band and the physical-law tests; it fails the full-band impulse-response budget and
+      becomes engine increment 2 by decision rule 3.
+- [ ] Exercise audio rendered with C2 within a cost budget (next experiment).
 - [ ] Canonical problems added, each with a reference, for: the 80 x 20 cm rectangle at
       four orientations (A3); a thin pole; an object off axis; two ears.
 - [ ] Measured rung: simulated against measured impulse responses for at least one

@@ -30,13 +30,26 @@ Every push to `main` and every pull request runs these jobs on GitHub:
 | --- | --- |
 | Hygiene and licensing | No compiled files, IDE state or files over 512 KiB are tracked; every file has a declared licence (REUSE); every dependency has a known licence on the allowlist in `docs/quality/licenses.toml`; every decision record cites existing literature and experiments. |
 | Lint and types | ruff lint and formatting pass; mypy passes in strict mode. |
-| Tests | The full suite passes on Linux, macOS and Windows with Python 3.12, 3.13 and 3.14, with at least 95% branch coverage. Warnings are errors. |
+| Tests | The full suite passes on Linux (Ubuntu 24.04 and 26.04), macOS 26 and Windows Server 2025 with Python 3.13 and 3.14, with at least 95% branch coverage. Warnings are errors. |
 | Acoustic validation | Every acoustic model is checked against exact solutions and a validated wave solver, with a declared verdict for each canonical problem (part of the tests above); a separate job repeats the solver's own checks on fine grids. See [docs/acoustics/validation.md](docs/acoustics/validation.md). |
 | Lowest dependencies | The suite also passes with the oldest dependency versions `pyproject.toml` claims to support. |
 | Next Python | Early warning: the suite runs on the next Python release once numpy, scipy and hypothesis can be imported there (pre-releases usually cannot). Until then the job passes with a notice saying nothing is known; once they can, a test failure turns the job red. It does not block merging. |
 | Legacy recording | The analysis still gives the expected results on the real 2016 recording, downloaded from a pinned commit and verified by checksum. |
 | Package | The wheel and source distribution build, pass `twine check`, and the installed command works in a clean environment. |
 | Dependency audit | No dependency in `uv.lock` has a known vulnerability. |
+
+Supported versions follow SPEC 0, the convention of the scientific Python community
+(https://scientific-python.org/specs/spec-0000/): each Python version is supported for
+three years after its release, and NumPy and SciPy feature releases for two years. The
+floors in `pyproject.toml` are raised accordingly every October, when a new Python
+version appears; the lowest-dependencies job then tests the new floors. SoundSight is an
+application rather than a library others depend on, so it has no reason to keep older
+versions. Development tools are locked and updated by Dependabot.
+
+Runner operating systems are pinned to exact versions, not to GitHub's moving "latest"
+labels, so that a change in results always comes from a change in the repository. Nothing
+updates them automatically: when GitHub releases a new OS image
+(https://github.com/actions/runner-images), update the matrix in `ci.yml` deliberately.
 
 The same workflow also runs weekly, to catch breakage caused by new releases of
 dependencies. GitHub Actions are pinned to full commit hashes, and Dependabot proposes

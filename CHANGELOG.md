@@ -8,6 +8,12 @@ All notable changes to this project are recorded here. The format follows
 
 ### Added
 
+- EXP-0004 candidate C2, edge diffraction of all orders
+  (`soundsight.acoustics.candidates.all_orders`): 18 of 18 EXP-0003 levels, every band of
+  the gap disc within 0.05 dB, but a full 48 kHz impulse response exceeds the cost budget.
+  EXP-0004 concluded: C2 becomes engine increment 2 by decision rule 3.
+- CI tests also on Ubuntu 26.04; macOS moved from 15 to 26 (GitHub's current macOS).
+
 - EXP-0004 candidate C1, second-order edge diffraction
   (`soundsight.acoustics.candidates.second_order`), with its weight fixed by a continuity
   test and a fast renderer for millions of arrivals. Evaluated as pre-registered: 15 of
@@ -50,7 +56,18 @@ All notable changes to this project are recorded here. The format follows
   next-Python jobs, a regression test on the 2016 recording, package build checks and
   a dependency audit.
 
+### Changed
+
+- Supported versions now follow SPEC 0: Python 3.13 or newer (was 3.12), NumPy 2.2 or
+  newer (was 1.26), SciPy 1.15 or newer. The policy is written in CONTRIBUTING.md.
+
+- Minimum SciPy raised from 1.11.2 to 1.12.0: candidate C2 uses the iterative solver's
+  `rtol` argument, introduced in SciPy 1.12 (caught by the lowest-dependencies CI job).
+
 ### Fixed
+
+- The engine's renderer silently truncated its fractional-delay filter for arrivals
+  closer to time zero than the filter's half-width; it now refuses them.
 
 - Band levels were averaged over FFT bins, whose positions depend on the recording
   length; on steep spectra this shifted levels by up to 0.54 dB. EXP-0003 and the

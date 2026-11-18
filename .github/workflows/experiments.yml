@@ -55,7 +55,7 @@ jobs:
   exp0004:
     name: EXP-0004 reference validity and baseline
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
@@ -70,3 +70,5 @@ jobs:
         run: uv run --no-sync python tools/experiments/exp0004.py --check
       - name: Re-evaluate candidate C1 and report its cost on this runner (W4)
         run: uv run --no-sync python tools/experiments/exp0004.py --candidate c1 --check
+      - name: Re-evaluate candidate C2 and report its cost on this runner (W4)
+        run: uv run --no-sync python tools/experiments/exp0004.py --candidate c2 --check
