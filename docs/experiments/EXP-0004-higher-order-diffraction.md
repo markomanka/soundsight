@@ -211,8 +211,9 @@ reciprocity to 1e-8, polygon and quadrature convergence, and impulse-response fi
 response was stopped at the 120 s budget after 578 of 1843 frequencies: **not
 accepted.** The budget is pass or fail, so the run stops where it is exceeded. Higher
 orders stay between -20 and -32 dB of the echo up to at least 12 kHz, so the protocol does
-not allow first-order diffraction to take over below that. Measured on the development
-machine (one run); the Experiments workflow repeats it on the CI runner.
+not allow first-order diffraction to take over below that. On the CI runner (official,
+Experiments workflow, three runs): 1.12 s, and all three runs stopped at the budget, after
+617, 628 and 629 of 1,843 frequencies.
 
 **Predictions against outcomes:**
 
