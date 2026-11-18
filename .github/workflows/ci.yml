@@ -72,7 +72,7 @@ jobs:
         # Pinned on purpose: "latest" labels move without notice. Review when GitHub
         # releases a new OS image (https://github.com/actions/runner-images).
         os: [ubuntu-24.04, ubuntu-26.04, macos-26, windows-2025]
-        python: ["3.12", "3.13", "3.14"]
+        python: ["3.13", "3.14"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
@@ -149,7 +149,7 @@ jobs:
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
         with:
           version: ${{ env.UV_VERSION }}
-          python-version: "3.12"
+          python-version: "3.13"
       - run: uv sync --resolution lowest-direct --no-default-groups --group test
       - name: Show resolved versions
         run: uv run --no-sync python -c "import numpy, scipy; print('numpy', numpy.__version__, 'scipy', scipy.__version__)"

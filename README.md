@@ -20,7 +20,7 @@ SoundSight is awkward to use without sight, that is a bug: please report it.
 
 ## Try it
 
-SoundSight needs Python 3.12 or newer. With [uv](https://docs.astral.sh/uv/) installed,
+SoundSight needs Python 3.13 or newer. With [uv](https://docs.astral.sh/uv/) installed,
 from a clone of this repository:
 
 ```

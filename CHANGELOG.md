@@ -58,6 +58,9 @@ All notable changes to this project are recorded here. The format follows
 
 ### Changed
 
+- Supported versions now follow SPEC 0: Python 3.13 or newer (was 3.12), NumPy 2.2 or
+  newer (was 1.26), SciPy 1.15 or newer. The policy is written in CONTRIBUTING.md.
+
 - Minimum SciPy raised from 1.11.2 to 1.12.0: candidate C2 uses the iterative solver's
   `rtol` argument, introduced in SciPy 1.12 (caught by the lowest-dependencies CI job).
 
