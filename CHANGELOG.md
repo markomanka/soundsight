@@ -56,6 +56,11 @@ All notable changes to this project are recorded here. The format follows
   next-Python jobs, a regression test on the 2016 recording, package build checks and
   a dependency audit.
 
+### Changed
+
+- Minimum SciPy raised from 1.11.2 to 1.12.0: candidate C2 uses the iterative solver's
+  `rtol` argument, introduced in SciPy 1.12 (caught by the lowest-dependencies CI job).
+
 ### Fixed
 
 - The engine's renderer silently truncated its fractional-delay filter for arrivals
