@@ -75,6 +75,25 @@ mouth's directivity and the mouth-to-ear path (B1). That calibration does not af
 comparison with C2, which is made per unit source, and is an open item for the exercise
 pack.
 
+## Clarifications (2026-11-26, recorded before any candidate was measured)
+
+Details the protocol left open, fixed before R2 was frozen and before any combination was
+evaluated. No threshold, metric or workload changed.
+
+1. **The recorded click** is the first click the click coach's detector finds in the 2016
+   recording, from 1 ms before its start to 2 ms after its end, averaged over the two
+   channels and resampled from 192 to 48 kHz (`tools/experiments/exp0005.py`).
+2. **R2 solves bins up to 0.45 times the sample rate**, the band in which rendered impulse
+   responses are accurate. The recorded click carries energy up to 24 kHz; above 21.6 kHz
+   no renderer here is accurate, and the M1 grid ends at 20 kHz.
+3. **Polygons.** The reference is C2 on a 48-sided disc, its validated configuration (EXP-0004).
+   R1 keeps its frozen 32 sides. R2 adds higher orders solved on the 48-sided disc.
+4. **Cost** runs are stopped once they exceed the 120 s budget, as in EXP-0004: the gate is
+   pass or fail, and continuing cannot change the verdict.
+5. **Re-checking in CI.** The full evaluation takes about one and a half hours, so the
+   Experiments workflow recomputes R1 for all 36 combinations and R2 for three of them, and
+   compares with the stored results.
+
 ## Review of the contributed renderer (R1), 2026-11-18
 
 Kimi (kimi.ai) contributed `soundsight/exercise/render.py`, its tests and the package

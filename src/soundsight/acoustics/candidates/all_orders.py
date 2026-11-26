@@ -362,3 +362,63 @@ class AllOrdersPlateModel:
             echo = echo_all_orders(plate, (0.0, 0.0, 0.0), None, f, c=self.c)
             return np.asarray(echo / plane_echo(f, target.distance, self.c), dtype=np.complex128)
         raise UnsupportedTargetError(f"{self.name} has no model for {type(target).__name__}")
+
+
+def higher_order_responses(
+    plate: Plate,
+    source: ArrayLike,
+    receiver: ArrayLike | None,
+    frequency_hz: ArrayLike,
+    *,
+    c: float = SPEED_OF_SOUND,
+    cache: dict[float, complex] | None = None,
+    deadline: float | None = None,
+) -> ComplexArray:
+    """Diffraction of order two and above at many frequencies, with kernels per octave.
+
+    The number of edge points follows the wavelength: frequencies are grouped in octaves
+    below the highest one, each solved with a kernel built for its band. Values found in
+    ``cache`` (keyed by frequency) are reused and new ones stored there, so a long
+    computation can be resumed. Past ``deadline`` (a ``time.perf_counter()`` value) it
+    stops with :class:`BudgetExceededError`, keeping what it solved in the cache.
+    """
+    import time  # noqa: PLC0415
+
+    rec = source if receiver is None else receiver
+    f = np.atleast_1d(np.asarray(frequency_hz, dtype=np.float64))
+    cache = {} if cache is None else cache
+    todo = sorted({float(x) for x in f if float(x) not in cache})
+    if todo:
+        top = max(todo)
+        upper_edges = [top / 2**k for k in range(12)]
+        done = len(f) - len(todo)
+        for k, upper in enumerate(upper_edges):
+            lower = upper_edges[k + 1] if k + 1 < len(upper_edges) else 0.0
+            band = [x for x in todo if lower < x <= upper]
+            if not band:
+                continue
+            kernel = build_kernel(plate, source, rec, upper, c=c)
+            for x in band:
+                if deadline is not None and time.perf_counter() > deadline:
+                    raise BudgetExceededError(0.0, done, len(f))
+                cache[x] = higher_order_response(kernel, x, c=c)
+                done += 1
+    return np.array([cache[float(x)] for x in f], dtype=np.complex128)
+
+
+def frequency_response(
+    plate: Plate,
+    source: ArrayLike,
+    receiver: ArrayLike | None,
+    frequency_hz: ArrayLike,
+    *,
+    c: float = SPEED_OF_SOUND,
+    cache: dict[float, complex] | None = None,
+    deadline: float | None = None,
+) -> ComplexArray:
+    """Echo with diffraction of all orders over a wide band (kernels per octave)."""
+    rec = source if receiver is None else receiver
+    f = np.atleast_1d(np.asarray(frequency_hz, dtype=np.float64))
+    first = plate_echo(plate, source, rec, f_max=float(f.max()), c=c).frequency_response(f)
+    higher = higher_order_responses(plate, source, rec, f, c=c, cache=cache, deadline=deadline)
+    return np.asarray(first + higher, dtype=np.complex128)
