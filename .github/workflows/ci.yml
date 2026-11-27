@@ -108,16 +108,18 @@ jobs:
         with:
           version: ${{ env.UV_VERSION }}
           python-version: "3.15"
-      - name: Install newest compatible versions (pre-releases only where needed)
-        run: uv sync --upgrade --prerelease=if-necessary-or-explicit --no-default-groups --group test
-      - name: Can the scientific stack and test tools run on this Python?
+      - name: Can the test dependencies be installed and imported on this Python?
         id: stack
         run: |
-          if uv run --no-sync python -c "import numpy, scipy, hypothesis, pytest"; then
+          # Installing newest releases on a pre-release Python can fail for reasons that
+          # say nothing about SoundSight (a wheel not yet built, a release mid-upload), so
+          # a failed install counts as "not testable yet", like a failed import.
+          if uv sync --upgrade --prerelease=if-necessary-or-explicit --no-default-groups --group test \
+             && uv run --no-sync python -c "import numpy, scipy, hypothesis, pytest"; then
             echo "ready=true" >> "$GITHUB_OUTPUT"
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "::notice title=Next Python not testable yet::numpy, scipy or hypothesis cannot be imported on this Python release. Nothing is known about SoundSight on it. This job will start testing as soon as the libraries support it."
+            echo "::notice title=Next Python not testable yet::The test dependencies cannot be installed or imported on this Python release. Nothing is known about SoundSight on it. This job will start testing as soon as the libraries support it."
           fi
       - name: Tests
         if: steps.stack.outputs.ready == 'true'
