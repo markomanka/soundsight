@@ -410,3 +410,19 @@ def test_exp0005_stored_results_are_complete_and_consistent() -> None:
         assert s["m1_pass"] == sum(c[name]["m1_pass"] for c in stored["combinations"])
         assert s["m2_pass"] == sum(c[name]["m2_pass"] for c in stored["combinations"])
         assert s["accepted"] == (s["m1_pass"] == s["m2_pass"] == 36 and s["M3"]["m3_pass"])
+
+
+def test_exp0006_stored_results_are_complete_and_consistent() -> None:
+    stored = json.loads(
+        (
+            Path(__file__).resolve().parents[1] / "docs" / "experiments" / "EXP-0006-results.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert len(stored["combinations"]) == 36
+    s = stored["summary"]
+    assert s["m1_pass"] == sum(c["R3"]["m1_pass"] for c in stored["combinations"])
+    assert s["m2_pass"] == sum(c["R3"]["m2_pass"] for c in stored["combinations"])
+    cost = stored["cost_dev"]
+    assert s["accepted_dev"] == (
+        s["m1_pass"] == s["m2_pass"] == 36 and cost["m3a_pass"] and cost["m3b_pass"]
+    )

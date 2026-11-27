@@ -37,10 +37,10 @@ until calibrated with instructors.
   plate, first-order diffraction) exists; on the size-discrimination discs of A3
   (EXP-0003) it is valid for 10 of 15 trials, and the rest use wave-solver echoes. EXP-0004
   chose diffraction of all orders (C2) as increment 2: valid for all 15 trials, but too
-  slow for full-band impulse responses as it stands. EXP-0005
-  chose to render exercise audio with it (R2) where the click has energy; trials with
-  sharp, broadband clicks still exceed the cost budget, so the next step is reusing each
-  disc's response across clicks and trials, then several objects with occlusion.
+  slow for full-band impulse responses as it stands. Exercise
+  audio is rendered from a per-disc echo cache (EXP-0006): all-orders accuracy in every
+  trial of the size-discrimination task, about 50 ms per trial once a disc is cached.
+  Next: the first exercise pack, then several objects with occlusion.
 - Exercises rendered in advance and played over headphones, triggered by the user, with
   the user's own recorded click. Template: the tasks of A3 (size discrimination,
   orientation, maze navigation with mirror-image transfer mazes, a no-click control).

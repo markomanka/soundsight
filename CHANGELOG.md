@@ -8,6 +8,10 @@ All notable changes to this project are recorded here. The format follows
 
 ### Added
 
+- EXP-0006 concluded: candidate R3 (per-disc echo cache) passes accuracy in all 36
+  combinations (M1 -38.8 dB or better) and both cost gates (57 ms per trial, 6.2 minutes
+  for the costliest disc's cache on the development machine); R3 renders exercises.
+
 - EXP-0006 pre-registered: rendering trials from a per-disc echo cache (candidate R3,
   `soundsight.exercise.render_cached`), computed once per disc and reused for every click.
 

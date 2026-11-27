@@ -14,6 +14,7 @@ on:
       - "docs/experiments/EXP-0003-*"
       - "docs/experiments/EXP-0004-*"
       - "docs/experiments/EXP-0005-*"
+      - "docs/experiments/EXP-0006-*"
       - "src/soundsight/exercise/**"
       - "docs/quality/budgets.toml"
   push:
@@ -25,6 +26,7 @@ on:
       - "docs/experiments/EXP-0003-*"
       - "docs/experiments/EXP-0004-*"
       - "docs/experiments/EXP-0005-*"
+      - "docs/experiments/EXP-0006-*"
       - "src/soundsight/exercise/**"
       - "docs/quality/budgets.toml"
 
@@ -97,3 +99,24 @@ jobs:
         run: uv run --no-sync python tools/experiments/exp0005.py check
       - name: Measure M3 on this runner (official figures, shown as notices)
         run: uv run --no-sync python tools/experiments/exp0005.py cost
+
+  exp0006:
+    name: EXP-0006 echo cache (sample re-check, official cost)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d  # v10.4.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+          enable-cache: true
+      - run: uv sync --locked --no-default-groups --group test
+      - name: Download and verify the 2016 recording
+        run: uv run --no-sync python tools/fetch_legacy_click.py
+      - name: Recompute a sample of combinations and compare with the stored results
+        run: uv run --no-sync python tools/experiments/exp0006.py check
+      - name: Measure M3a and M3b on this runner (official figures, shown as notices)
+        run: uv run --no-sync python tools/experiments/exp0006.py cost
