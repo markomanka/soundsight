@@ -131,14 +131,45 @@ def cost() -> int:
     return 0 if math.isfinite(trial) else 1
 
 
+#: Combinations recomputed from scratch in CI (the full run takes about an hour).
+CHECK_SAMPLE = (("synthetic", 5.1, 99.0), ("recorded", 5.1, 99.0), ("recorded", 9.0, 66.0))
+
+
+def check() -> int:
+    """CI: recompute a sample of combinations from scratch and compare with stored results."""
+    stored = {
+        (c["click"], c["diameter_cm"], c["distance_cm"]): c["R3"]
+        for c in json.loads(RESULTS.read_text(encoding="utf-8"))["combinations"]
+    }
+    problems = []
+    for clk, d, dist in CHECK_SAMPLE:
+        cache = r3.build_cache(d / 100, dist / 100, exp0005.FS)
+        ref = exp0005.reference(d, dist, None)
+        new = exp0005.metrics(ref, r3.cached_impulse_response(cache), exp0005.click(clk))
+        old = stored[(clk, d, dist)]
+        if (
+            abs(new["band_level_error_db"] - old["band_level_error_db"])
+            > exp0005.REPRODUCIBILITY_DB
+        ):
+            problems.append(f"{clk} {d} cm at {dist} cm: band level differs")
+        if new["m1_pass"] != old["m1_pass"] or new["m2_pass"] != old["m2_pass"]:
+            problems.append(f"{clk} {d} cm at {dist} cm: verdict differs")
+    for p in problems:
+        print(f"EXP-0006: {p}", file=sys.stderr)
+    print(f"checked {len(CHECK_SAMPLE)} combinations from scratch: {len(problems)} differences")
+    return 1 if problems else 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Command line."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["build", "run", "cost"])
+    parser.add_argument("action", choices=["build", "run", "cost", "check"])
     parser.add_argument("--time-limit", type=float, default=None, help="seconds (build only)")
     args = parser.parse_args(argv)
     if args.action == "build":
         return build(args.time_limit)
+    if args.action == "check":
+        return check()
     return run() if args.action == "run" else cost()
 
 
