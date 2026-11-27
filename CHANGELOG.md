@@ -8,6 +8,12 @@ All notable changes to this project are recorded here. The format follows
 
 ### Added
 
+- EXP-0005 concluded: candidate R2 (`soundsight.exercise.render_all_orders`) renders
+  trials with diffraction of all orders where the click has energy; it passes accuracy in
+  all 36 combinations (R1: 3) but exceeds the cost budget with a broadband click, and
+  renders exercises by decision rule 3. Resumable experiment runner; CI re-check and
+  official cost measurement.
+
 - Exercise trial renderer (`soundsight.exercise.render`): a click and its echo from one
   disc, with a report of the facts and a screen-reader text. Contributed by Kimi
   (kimi.ai), revised on review (explicit click reference distance, corrected physics in

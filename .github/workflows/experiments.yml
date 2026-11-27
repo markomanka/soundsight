@@ -13,6 +13,8 @@ on:
       - "src/soundsight/acoustics/candidates/**"
       - "docs/experiments/EXP-0003-*"
       - "docs/experiments/EXP-0004-*"
+      - "docs/experiments/EXP-0005-*"
+      - "src/soundsight/exercise/**"
       - "docs/quality/budgets.toml"
   push:
     branches: [main]
@@ -22,6 +24,8 @@ on:
       - "src/soundsight/acoustics/candidates/**"
       - "docs/experiments/EXP-0003-*"
       - "docs/experiments/EXP-0004-*"
+      - "docs/experiments/EXP-0005-*"
+      - "src/soundsight/exercise/**"
       - "docs/quality/budgets.toml"
 
 permissions:
@@ -72,3 +76,24 @@ jobs:
         run: uv run --no-sync python tools/experiments/exp0004.py --candidate c1 --check
       - name: Re-evaluate candidate C2 and report its cost on this runner (W4)
         run: uv run --no-sync python tools/experiments/exp0004.py --candidate c2 --check
+
+  exp0005:
+    name: EXP-0005 exercise rendering (R1 in full, R2 sample, official cost)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+          enable-cache: true
+      - run: uv sync --locked --no-default-groups --group test
+      - name: Download and verify the 2016 recording
+        run: uv run --no-sync python tools/fetch_legacy_click.py
+      - name: Recompute and compare with the stored results
+        run: uv run --no-sync python tools/experiments/exp0005.py check
+      - name: Measure M3 on this runner (official figures, shown as notices)
+        run: uv run --no-sync python tools/experiments/exp0005.py cost

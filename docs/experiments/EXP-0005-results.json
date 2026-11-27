@@ -1,0 +1,641 @@
+{
+  "experiment": "EXP-0005",
+  "combinations": [
+    {
+      "click": "synthetic",
+      "diameter_cm": 5.1,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -0.958,
+        "m1_pass": false,
+        "band_level_error_db": 1.888,
+        "m2_pass": false
+      },
+      "R2": {
+        "weighted_error_db": -48.103,
+        "m1_pass": true,
+        "band_level_error_db": 0.0051,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 5.1,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -1.034,
+        "m1_pass": false,
+        "band_level_error_db": 1.9046,
+        "m2_pass": false
+      },
+      "R2": {
+        "weighted_error_db": -45.017,
+        "m1_pass": true,
+        "band_level_error_db": 0.005,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 5.1,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -1.268,
+        "m1_pass": false,
+        "band_level_error_db": 1.9493,
+        "m2_pass": false
+      },
+      "R2": {
+        "weighted_error_db": -43.945,
+        "m1_pass": true,
+        "band_level_error_db": 0.0048,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 9.0,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -13.021,
+        "m1_pass": false,
+        "band_level_error_db": -1.1699,
+        "m2_pass": false
+      },
+      "R2": {
+        "weighted_error_db": -56.179,
+        "m1_pass": true,
+        "band_level_error_db": 0.0012,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 9.0,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -13.249,
+        "m1_pass": false,
+        "band_level_error_db": -1.116,
+        "m2_pass": false
+      },
+      "R2": {
+        "weighted_error_db": -53.9,
+        "m1_pass": true,
+        "band_level_error_db": 0.0011,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 9.0,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -13.929,
+        "m1_pass": false,
+        "band_level_error_db": -0.9674,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -53.446,
+        "m1_pass": true,
+        "band_level_error_db": 0.0012,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 13.5,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -16.717,
+        "m1_pass": false,
+        "band_level_error_db": 0.3204,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -57.187,
+        "m1_pass": true,
+        "band_level_error_db": 0.0007,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 13.5,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -17.061,
+        "m1_pass": false,
+        "band_level_error_db": 0.3156,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -55.835,
+        "m1_pass": true,
+        "band_level_error_db": 0.0008,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 13.5,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -18.004,
+        "m1_pass": false,
+        "band_level_error_db": 0.292,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -58.235,
+        "m1_pass": true,
+        "band_level_error_db": 0.0011,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 17.5,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -18.887,
+        "m1_pass": false,
+        "band_level_error_db": 0.0103,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -59.911,
+        "m1_pass": true,
+        "band_level_error_db": 0.0006,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 17.5,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -19.354,
+        "m1_pass": false,
+        "band_level_error_db": 0.0175,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -58.634,
+        "m1_pass": true,
+        "band_level_error_db": 0.0007,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 17.5,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -20.465,
+        "m1_pass": false,
+        "band_level_error_db": 0.0386,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -61.591,
+        "m1_pass": true,
+        "band_level_error_db": 0.001,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 22.9,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -24.368,
+        "m1_pass": false,
+        "band_level_error_db": 0.07,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -62.475,
+        "m1_pass": true,
+        "band_level_error_db": 0.0006,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 22.9,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -24.795,
+        "m1_pass": false,
+        "band_level_error_db": 0.0498,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -61.447,
+        "m1_pass": true,
+        "band_level_error_db": 0.0007,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 22.9,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -25.424,
+        "m1_pass": true,
+        "band_level_error_db": -0.0083,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -62.257,
+        "m1_pass": true,
+        "band_level_error_db": 0.001,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 25.4,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -24.924,
+        "m1_pass": false,
+        "band_level_error_db": -0.0519,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -62.988,
+        "m1_pass": true,
+        "band_level_error_db": 0.0006,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 25.4,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -25.275,
+        "m1_pass": true,
+        "band_level_error_db": -0.0524,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -61.992,
+        "m1_pass": true,
+        "band_level_error_db": 0.0007,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "synthetic",
+      "diameter_cm": 25.4,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -25.345,
+        "m1_pass": true,
+        "band_level_error_db": -0.0602,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -61.487,
+        "m1_pass": true,
+        "band_level_error_db": 0.0011,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 5.1,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -0.634,
+        "m1_pass": false,
+        "band_level_error_db": 1.888,
+        "m2_pass": false
+      },
+      "R2": {
+        "weighted_error_db": -42.832,
+        "m1_pass": true,
+        "band_level_error_db": 0.0052,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 5.1,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -0.721,
+        "m1_pass": false,
+        "band_level_error_db": 1.9046,
+        "m2_pass": false
+      },
+      "R2": {
+        "weighted_error_db": -41.267,
+        "m1_pass": true,
+        "band_level_error_db": 0.0055,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 5.1,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -0.981,
+        "m1_pass": false,
+        "band_level_error_db": 1.9493,
+        "m2_pass": false
+      },
+      "R2": {
+        "weighted_error_db": -40.227,
+        "m1_pass": true,
+        "band_level_error_db": 0.0043,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 9.0,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -10.64,
+        "m1_pass": false,
+        "band_level_error_db": -1.1699,
+        "m2_pass": false
+      },
+      "R2": {
+        "weighted_error_db": -51.126,
+        "m1_pass": true,
+        "band_level_error_db": 0.0013,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 9.0,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -10.83,
+        "m1_pass": false,
+        "band_level_error_db": -1.116,
+        "m2_pass": false
+      },
+      "R2": {
+        "weighted_error_db": -49.647,
+        "m1_pass": true,
+        "band_level_error_db": 0.0013,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 9.0,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -11.369,
+        "m1_pass": false,
+        "band_level_error_db": -0.9674,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -48.677,
+        "m1_pass": true,
+        "band_level_error_db": 0.0015,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 13.5,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -15.452,
+        "m1_pass": false,
+        "band_level_error_db": 0.3204,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -53.258,
+        "m1_pass": true,
+        "band_level_error_db": 0.0009,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 13.5,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -15.731,
+        "m1_pass": false,
+        "band_level_error_db": 0.3156,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -51.829,
+        "m1_pass": true,
+        "band_level_error_db": 0.001,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 13.5,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -16.405,
+        "m1_pass": false,
+        "band_level_error_db": 0.292,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -50.9,
+        "m1_pass": true,
+        "band_level_error_db": 0.0013,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 17.5,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -17.933,
+        "m1_pass": false,
+        "band_level_error_db": 0.0103,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -55.215,
+        "m1_pass": true,
+        "band_level_error_db": 0.0007,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 17.5,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -18.22,
+        "m1_pass": false,
+        "band_level_error_db": 0.0175,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -53.881,
+        "m1_pass": true,
+        "band_level_error_db": 0.0008,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 17.5,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -18.835,
+        "m1_pass": false,
+        "band_level_error_db": 0.0386,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -52.843,
+        "m1_pass": true,
+        "band_level_error_db": 0.0011,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 22.9,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -21.973,
+        "m1_pass": false,
+        "band_level_error_db": 0.07,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -57.723,
+        "m1_pass": true,
+        "band_level_error_db": 0.0007,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 22.9,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -22.167,
+        "m1_pass": false,
+        "band_level_error_db": 0.0498,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -56.257,
+        "m1_pass": true,
+        "band_level_error_db": 0.0008,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 22.9,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -22.656,
+        "m1_pass": false,
+        "band_level_error_db": -0.0083,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -54.898,
+        "m1_pass": true,
+        "band_level_error_db": 0.0011,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 25.4,
+      "distance_cm": 99.0,
+      "R1": {
+        "weighted_error_db": -23.292,
+        "m1_pass": false,
+        "band_level_error_db": -0.0519,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -58.293,
+        "m1_pass": true,
+        "band_level_error_db": 0.0006,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 25.4,
+      "distance_cm": 66.0,
+      "R1": {
+        "weighted_error_db": -23.418,
+        "m1_pass": false,
+        "band_level_error_db": -0.0524,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -56.844,
+        "m1_pass": true,
+        "band_level_error_db": 0.0008,
+        "m2_pass": true
+      }
+    },
+    {
+      "click": "recorded",
+      "diameter_cm": 25.4,
+      "distance_cm": 33.0,
+      "R1": {
+        "weighted_error_db": -23.702,
+        "m1_pass": false,
+        "band_level_error_db": -0.0602,
+        "m2_pass": true
+      },
+      "R2": {
+        "weighted_error_db": -55.274,
+        "m1_pass": true,
+        "band_level_error_db": 0.0012,
+        "m2_pass": true
+      }
+    }
+  ],
+  "summary": {
+    "R1": {
+      "m1_pass": 3,
+      "m2_pass": 26,
+      "M3": {
+        "runs": 3,
+        "median_s": 0.07,
+        "stopped_at_budget": 0,
+        "m3_pass": true
+      },
+      "accepted": false
+    },
+    "R2": {
+      "m1_pass": 36,
+      "m2_pass": 36,
+      "M3": {
+        "runs": 3,
+        "median_s": null,
+        "stopped_at_budget": 3,
+        "m3_pass": false
+      },
+      "accepted": false
+    }
+  }
+}
