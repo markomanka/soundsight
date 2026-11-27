@@ -56,3 +56,13 @@ weighted_error_db = -25.0
 band_level_db = 1.0
 # Median of three renders of the costliest trial on a standard GitHub runner.
 cost_trial_s = 120.0
+
+[experiments.exp0006]
+# Pre-registered 2026-11-27. Accuracy gates are EXP-0005's, unchanged.
+weighted_error_db = -25.0
+band_level_db = 1.0
+# M3a: rendering one trial from a disc's cache (median of three, costliest combination).
+cost_trial_s = 1.0
+# M3b: building the cache of the costliest disc (25.4 cm at 33 cm), one run. Eighteen
+# discs then take at most six hours: an exercise pack precomputes overnight.
+cost_cache_s = 1200.0

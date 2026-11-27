@@ -25,5 +25,6 @@ pre-registered or retrospective.
 | EXP-0001 | Which language and libraries for the real-time kernel? | Protocol drafted; deferred, to be revised before it runs |
 | EXP-0002 | Waves or rays for the acoustic engine? | Complete; retrospective |
 | EXP-0003 | Does the engine reproduce the echoes of the size-discrimination discs? | Run 2026-11-16, corrected 2026-11-17: valid for 10 of 15 trials; re-run by CI |
+| EXP-0006 | Can a per-disc echo cache render trials with all-orders accuracy within budget? | Pre-registered 2026-11-27 |
 | EXP-0005 | How to render exercise trials with the accuracy of increment 2, within budget? | Concluded 2026-11-27: no candidate passes every gate; R2 (all orders) renders exercises by rule 3; cost with broadband clicks is the next problem |
 | EXP-0004 | Which higher-order edge diffraction closes the gap? | Concluded 2026-11-17: no candidate passes every gate; C2 (all orders) becomes engine increment 2 by rule 3; full-band rendering cost is the next problem |

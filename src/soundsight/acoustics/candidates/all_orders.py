@@ -393,7 +393,8 @@ def higher_order_responses(
         upper_edges = [top / 2**k for k in range(12)]
         done = len(f) - len(todo)
         for k, upper in enumerate(upper_edges):
-            lower = upper_edges[k + 1] if k + 1 < len(upper_edges) else 0.0
+            # The lowest band reaches down to and includes zero frequency.
+            lower = upper_edges[k + 1] if k + 1 < len(upper_edges) else -math.inf
             band = [x for x in todo if lower < x <= upper]
             if not band:
                 continue

@@ -379,7 +379,7 @@ def test_exp0004_candidate_results_are_complete() -> None:
     )
 
 
-@pytest.mark.parametrize("script", ["exp0003.py", "exp0004.py"])
+@pytest.mark.parametrize("script", ["exp0003.py", "exp0004.py", "exp0005.py", "exp0006.py"])
 def test_experiment_scripts_run_the_way_ci_runs_them(script: str) -> None:
     """CI runs the scripts as plain files, with only their own folder on the import path
     (a missing import there once failed CI while passing locally)."""
