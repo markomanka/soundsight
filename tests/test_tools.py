@@ -396,3 +396,17 @@ def test_experiment_scripts_run_the_way_ci_runs_them(script: str) -> None:
         env={k: v for k, v in __import__("os").environ.items() if k != "PYTHONPATH"},
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_exp0005_stored_results_are_complete_and_consistent() -> None:
+    stored = json.loads(
+        (
+            Path(__file__).resolve().parents[1] / "docs" / "experiments" / "EXP-0005-results.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert len(stored["combinations"]) == 36
+    for name in ("R1", "R2"):
+        s = stored["summary"][name]
+        assert s["m1_pass"] == sum(c[name]["m1_pass"] for c in stored["combinations"])
+        assert s["m2_pass"] == sum(c[name]["m2_pass"] for c in stored["combinations"])
+        assert s["accepted"] == (s["m1_pass"] == s["m2_pass"] == 36 and s["M3"]["m3_pass"])

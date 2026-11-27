@@ -192,7 +192,12 @@ def cost(name: str, runs: int = 3) -> dict[str, Any]:
     """M3: median of three renders of the costliest combination, stopped at the budget."""
     c = recorded_click()
     times = []
-    for _ in range(runs):
+    for i in range(runs):
+        # Each run's time is cached, so a measurement interrupted between runs resumes.
+        record = CACHE / f"cost_{name}_{i}.json"
+        if record.is_file():
+            times.append(float(json.loads(record.read_text(encoding="utf-8"))["seconds"]))
+            continue
         started = time.perf_counter()
         try:
             if name == "R1":
@@ -208,6 +213,8 @@ def cost(name: str, runs: int = 3) -> dict[str, Any]:
             times.append(time.perf_counter() - started)
         except BudgetExceededError:
             times.append(math.inf)
+        CACHE.mkdir(parents=True, exist_ok=True)
+        record.write_text(json.dumps({"seconds": times[-1]}), encoding="utf-8")
     median = float(np.median(times))
     return {
         "runs": runs,
@@ -274,14 +281,28 @@ def check() -> int:
     return 1 if problems else 0
 
 
+def report_cost() -> int:
+    """M3 on the machine at hand, reported as a notice visible on the CI run page."""
+    for name in ("R1", "R2"):
+        m = cost(name)
+        median = f"{m['median_s']} s" if m["median_s"] is not None else "over the budget"
+        print(
+            f"::notice title=EXP-0005 M3 cost ({name})::median {median}, "
+            f"{m['stopped_at_budget']} of {m['runs']} runs stopped at {COST_TRIAL_S:g} s"
+        )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Command line."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["run", "assemble", "check"])
+    parser.add_argument("action", choices=["run", "assemble", "check", "cost"])
     parser.add_argument("--time-limit", type=float, default=None, help="seconds (run only)")
     args = parser.parse_args(argv)
     if args.action == "run":
         return run(args.time_limit)
+    if args.action == "cost":
+        return report_cost()
     return assemble() if args.action == "assemble" else check()
 
 
