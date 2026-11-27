@@ -95,3 +95,12 @@ def test_dtft_matches_fft_at_bins() -> None:
     x = np.random.default_rng(0).normal(size=64)
     f = np.fft.rfftfreq(64, 1 / FS)
     np.testing.assert_allclose(r2.dtft(x, FS, f), np.fft.rfft(x), atol=1e-9)
+
+
+def test_banded_solving_includes_zero_frequency() -> None:
+    """Zero frequency is a valid request (R3 of EXP-0006 needs it) and must be solved."""
+    plate = eg.Plate.regular(0.03, 24, centre=(0, 0, 0.5))
+    values = ao.higher_order_responses(plate, (0, 0, 0), None, np.array([0.0, 800.0]))
+    assert np.isfinite(values).all()
+    kernel = ao.build_kernel(plate, (0, 0, 0), (0, 0, 0), 800.0)
+    assert values[0] == pytest.approx(ao.higher_order_response(kernel, 0.0), rel=1e-9)

@@ -8,6 +8,9 @@ All notable changes to this project are recorded here. The format follows
 
 ### Added
 
+- EXP-0006 pre-registered: rendering trials from a per-disc echo cache (candidate R3,
+  `soundsight.exercise.render_cached`), computed once per disc and reused for every click.
+
 - EXP-0005 concluded: candidate R2 (`soundsight.exercise.render_all_orders`) renders
   trials with diffraction of all orders where the click has energy; it passes accuracy in
   all 36 combinations (R1: 3) but exceeds the cost budget with a broadband click, and
@@ -78,6 +81,9 @@ All notable changes to this project are recorded here. The format follows
   `rtol` argument, introduced in SciPy 1.12 (caught by the lowest-dependencies CI job).
 
 ### Fixed
+
+- The banded all-orders solver could not solve zero frequency (its lowest band excluded
+  it). No earlier result used zero frequency.
 
 - The engine's renderer silently truncated its fractional-delay filter for arrivals
   closer to time zero than the filter's half-width; it now refuses them.

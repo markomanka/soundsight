@@ -173,8 +173,8 @@ M1: click-weighted error against C2 (pass at most -25 dB). M2: band level agains
 | R1 | 3/36 | 26/36 | 0.07 s | no |
 | R2 | 36/36 | 36/36 | over 120 s in all three runs | no |
 
-M3 was measured on the development machine; the official figures on a standard GitHub
-runner are reported by the Experiments workflow as notices on its run page.
+M3 on a standard GitHub runner (official, Experiments workflow, 2026-11-27): R1 0.1 s
+median; R2 over the 120 s budget in all three runs, as on the development machine.
 
 ### Predictions against outcomes
 
