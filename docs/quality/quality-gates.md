@@ -60,8 +60,8 @@ Status: [x] met and enforced by CI; [ ] open.
 - [ ] Room reverberation, when added: parameters of E1 reported in JND units against a
       measured room. The pass mark is set from the state of the art (D5), not at one JND,
       which input-data uncertainty puts out of reach (D3).
-- [ ] Each exercise file is stored with a hash and its regeneration command; CI fails on
-      drift without a regeneration commit.
+- [x] Each exercise file of pack v0 is listed with its SHA-256 and reproduced by
+      regeneration (tested); the stored disc caches are checked against a fresh computation.
 - [ ] Exercises follow A3's structure, including mirror-image transfer mazes and the
       no-click control.
 - [ ] Three or more blind co-designers complete each exercise unaided.

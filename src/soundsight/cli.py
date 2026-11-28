@@ -76,13 +76,52 @@ def build_parser() -> argparse.ArgumentParser:
     )
     synth.add_argument("--sample-rate", type=int, default=48_000, help="in hertz")
     synth.add_argument("--seed", type=int, default=0, help="random seed for the noise")
+    exercise = groups.add_parser("exercise", help="generate exercise packs")
+    tasks = exercise.add_subparsers(dest="command", required=True, metavar="ACTION")
+    pack = tasks.add_parser("pack", help="write the size-discrimination pack (v0, for co-design)")
+    pack.add_argument("output", type=Path, help="folder to create")
+    pack.add_argument(
+        "--click-reference-distance",
+        type=float,
+        required=True,
+        help="distance from the mouth, in metres, that the click recording stands for "
+        "(provisional until calibrated)",
+    )
+    pack.add_argument(
+        "--click",
+        type=Path,
+        default=None,
+        help="WAV file with one click at 48 kHz (default: synthetic click)",
+    )
     return parser
+
+
+def _pack(args: argparse.Namespace) -> int:
+    from soundsight.exercise.pack import SAMPLE_RATE, make_pack  # noqa: PLC0415
+
+    click = None
+    if args.click is not None:
+        rec = read_wav(args.click)
+        if rec.sample_rate != SAMPLE_RATE:
+            msg = f"the click must be recorded at {SAMPLE_RATE} Hz, not {rec.sample_rate} Hz"
+            raise AudioError(msg)
+        click = rec.channel("mean")
+    manifest = make_pack(
+        args.output, click_reference_distance_m=args.click_reference_distance, click=click
+    )
+    sys.stdout.write(
+        f"Wrote {len(manifest['trials'])} trials, a player and instructions to {args.output}.\n"
+        "Open player.html in a web browser to start.\n"
+    )
+    return EXIT_OK
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the command line and return the exit code."""
     args = build_parser().parse_args(argv)
     try:
+        if args.group == "exercise":
+            return _pack(args)
         if args.command == "analyze":
             return _analyze(args)
         return _synth(args)

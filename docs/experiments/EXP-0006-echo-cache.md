@@ -144,8 +144,8 @@ All 36 pass both gates: M1 from -38.8 to -78.4 dB, M2 within 0.035 dB.
 
 M3b on the development machine is the compute time of the resumable build, summed over
 its chunks, which slightly overstates a single uninterrupted build. Building all 18 discs
-took 34 minutes. The official figures on a standard GitHub runner are
-reported by the Experiments workflow as notices on its run page.
+took 34 minutes. On a standard GitHub runner (official, Experiments workflow,
+2026-11-28, two runs): cache build 274 s and 281 s, trial from cache 0.05 s.
 
 ### Predictions against outcomes
 

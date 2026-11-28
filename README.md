@@ -45,6 +45,16 @@ The reference ranges used by the checks are **provisional**. They follow publish
 descriptions of expert echolocators' clicks loosely and will be calibrated with
 echolocation instructors and researchers before being offered as targets.
 
+## Try the first exercise pack
+
+```
+uv run soundsight exercise pack my-pack --click-reference-distance 0.5
+```
+
+then open `my-pack/player.html` in a browser, with headphones: which of two discs is
+larger, judged by echo alone. It is version 0, made to be tried and criticised by blind
+co-designers before anyone trains with it; see [docs/exercise/pack-v0.md](docs/exercise/pack-v0.md).
+
 ## Plan and evidence
 
 - [Roadmap](docs/roadmap.md): the stages, and what is not yet known.

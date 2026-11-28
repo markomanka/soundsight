@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!-- SPDX-FileCopyrightText: 2026 The SoundSight contributors -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SoundSight: which disc is larger?</title>
+<style>
+  :root { --bg: #ffffff; --fg: #111111; --accent: #0b57d0; color-scheme: light; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #111111; --fg: #f2f2f2; --accent: #8ab4f8; color-scheme: dark; } }
+  body { background: var(--bg); color: var(--fg); font: 1.25rem/1.6 system-ui, sans-serif; margin: 0; }
+  main { max-width: 40rem; margin: 0 auto; padding: 1.5rem; }
+  button { font: inherit; padding: 0.8rem 1.2rem; margin: 0.4rem 0.4rem 0.4rem 0; border: 2px solid var(--accent);
+           border-radius: 0.5rem; background: var(--bg); color: var(--fg); cursor: pointer; }
+  button:focus-visible, h2:focus-visible { outline: 4px solid var(--accent); outline-offset: 3px; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+</style>
+</head>
+<body>
+<main>
+  <h1>SoundSight: which disc is larger?</h1>
+  <section id="intro" aria-labelledby="intro-heading">
+    <h2 id="intro-heading">How it works</h2>
+    <p>Use headphones. Each trial plays two clicks. After each click you hear its echo from a disc in front of you.
+       Decide which disc was larger: the first or the second.</p>
+    <p>Keys: <kbd>P</kbd> plays the trial, <kbd>1</kbd> means the first disc was larger, <kbd>2</kbd> means the second.
+       You can play a trial as often as you like before answering.</p>
+    <p id="pack-status"></p>
+    <p><label><input type="checkbox" id="feedback" checked> Tell me after each answer whether I was right</label></p>
+    <button type="button" id="start">Start</button>
+  </section>
+  <section id="trial" hidden aria-labelledby="trial-heading">
+    <h2 id="trial-heading" tabindex="-1">Trial</h2>
+    <button type="button" id="play">Play the trial (P)</button>
+    <button type="button" id="first" disabled>The first disc was larger (1)</button>
+    <button type="button" id="second" disabled>The second disc was larger (2)</button>
+  </section>
+  <section id="done" hidden aria-labelledby="done-heading">
+    <h2 id="done-heading" tabindex="-1">Finished</h2>
+    <p id="summary"></p>
+    <button type="button" id="save">Save my answers</button>
+  </section>
+  <p id="status" role="status" aria-live="polite"></p>
+</main>
+<script id="manifest" type="application/json">__MANIFEST__</script>
+<script>
+"use strict";
+const manifest = JSON.parse(document.getElementById("manifest").textContent);
+const $ = (id) => document.getElementById(id);
+const say = (text) => { $("status").textContent = ""; setTimeout(() => { $("status").textContent = text; }, 50); };
+const order = manifest.trials.slice();
+for (let i = order.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [order[i], order[j]] = [order[j], order[i]];
+}
+const answers = [];
+let index = 0, plays = 0, shownAt = 0, audio = null;
+
+$("pack-status").textContent = manifest.status;
+
+function showTrial() {
+  const t = order[index];
+  plays = 0;
+  shownAt = performance.now();
+  $("first").disabled = true;
+  $("second").disabled = true;
+  $("trial-heading").textContent = `Trial ${index + 1} of ${order.length}`;
+  $("trial-heading").focus();
+}
+
+function play() {
+  if ($("trial").hidden) return;
+  if (audio) { audio.pause(); }
+  audio = new Audio(order[index].file);
+  audio.play().catch(() => say("The sound could not be played. Check that the files are in the same folder as this page."));
+  plays += 1;
+  $("first").disabled = false;
+  $("second").disabled = false;
+  say(plays === 1 ? "Playing. Then answer 1 or 2." : `Playing again, time ${plays}.`);
+}
+
+function answer(choice) {
+  if ($("trial").hidden || plays === 0) { say("Play the trial first, with P."); return; }
+  const t = order[index];
+  const correct = choice === t.larger;
+  answers.push({ position: index + 1, trial: t.number, file: t.file, distance_cm: t.distance_cm,
+    first_cm: t.first_cm, second_cm: t.second_cm, larger: t.larger, answer: choice, correct,
+    plays, response_ms: Math.round(performance.now() - shownAt), time: new Date().toISOString() });
+  if ($("feedback").checked) say(correct ? "Right." : "Not this time.");
+  index += 1;
+  if (index < order.length) { setTimeout(showTrial, 900); } else { setTimeout(finish, 900); }
+}
+
+function finish() {
+  const right = answers.filter((a) => a.correct).length;
+  $("trial").hidden = true;
+  $("done").hidden = false;
+  $("summary").textContent = `You answered ${right} of ${answers.length} trials correctly. Please save your answers and send the file back.`;
+  $("done-heading").focus();
+}
+
+function save() {
+  const header = ["position", "trial", "file", "distance_cm", "first_cm", "second_cm", "larger", "answer", "correct", "plays", "response_ms", "time"];
+  const rows = answers.map((a) => header.map((h) => a[h]).join(","));
+  const blob = new Blob([[header.join(","), ...rows].join("\n") + "\n"], { type: "text/csv" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `soundsight-${manifest.pack}-answers.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  say("Your answers were saved to your downloads folder.");
+}
+
+$("start").addEventListener("click", () => { $("intro").hidden = true; $("trial").hidden = false; showTrial(); });
+$("play").addEventListener("click", play);
+$("first").addEventListener("click", () => answer(1));
+$("second").addEventListener("click", () => answer(2));
+$("save").addEventListener("click", save);
+document.addEventListener("keydown", (e) => {
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
+  const key = e.key.toLowerCase();
+  if (key === "p") { e.preventDefault(); play(); }
+  else if (key === "1") { e.preventDefault(); answer(1); }
+  else if (key === "2") { e.preventDefault(); answer(2); }
+});
+</script>
+</body>
+</html>

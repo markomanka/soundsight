@@ -8,6 +8,11 @@ All notable changes to this project are recorded here. The format follows
 
 ### Added
 
+- Exercise pack v0 (`soundsight exercise pack`): the size-discrimination task adapted to
+  two sequential intervals, 30 trials rendered with R3 from per-disc caches stored with the
+  package, one gain per pack, file hashes in a manifest, and an offline, screen-reader-first
+  HTML player that saves answers as CSV. For co-design; not yet for training.
+
 - EXP-0006 concluded: candidate R3 (per-disc echo cache) passes accuracy in all 36
   combinations (M1 -38.8 dB or better) and both cost gates (57 ms per trial, 6.2 minutes
   for the costliest disc's cache on the development machine); R3 renders exercises.
