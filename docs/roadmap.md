@@ -40,7 +40,8 @@ until calibrated with instructors.
   slow for full-band impulse responses as it stands. Exercise
   audio is rendered from a per-disc echo cache (EXP-0006): all-orders accuracy in every
   trial of the size-discrimination task, about 50 ms per trial once a disc is cached.
-  Next: the first exercise pack, then several objects with occlusion.
+  Exercise pack v0 (docs/exercise/pack-v0.md) is ready for co-designers. Next: their
+  feedback, echo-level calibration, then several objects with occlusion.
 - Exercises rendered in advance and played over headphones, triggered by the user, with
   the user's own recorded click. Template: the tasks of A3 (size discrimination,
   orientation, maze navigation with mirror-image transfer mazes, a no-click control).
